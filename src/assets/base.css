@@ -1,0 +1,64 @@
+:root {
+  --theme-orange: #FF761C;
+  --theme-light-green-bg: linear-gradient(195.4deg, #86E3FF 10.8%, #4CFA9D 163.89%);
+  --theme-gray-bg: #C8C8C8
+}
+body {
+  min-height: 100 vh;
+  background: url('background.svg');
+}
+a {
+  text-decoration: none;
+  color: inherit;
+  font-size: 16px;
+}
+.btn {
+  background-color: var(--theme-orange);
+  color: white;
+  font-weight: 600;
+  padding: 15px;
+  border-radius: 25px;
+  margin-top: 40px;
+  display: inline-block;
+}
+.btn-reverse {
+  background-color: white;
+  color: var(--theme-orange);
+}
+.blur-card-bg {
+  background: linear-gradient(168.04deg, rgba(255, 255, 255, 0.56) 6.64%, rgba(248, 248, 255, 0.71) 38.22%, rgba(255, 255, 255, 0.59) 65.37%, #F8EBF4 92.29%);
+  box-shadow: -10px 48.5967px 140px rgba(126, 123, 160, 0.2);
+  backdrop-filter: blur(19px);
+  border-radius: 34px;
+}
+.number-in-circle {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  border-radius: 15px;
+  line-height: 30px;
+  background: var(--theme-light-green-bg);
+  color: white;
+  font-size: 20px;
+  font-weight: 400;
+}
+.inactive-circle {
+  background: var(--theme-gray-bg);
+}
+
+.create-wallet-steps {
+  padding: 40px 70px;
+  font-size: 14px;
+}
+
+/** override Element plus style **/
+.el-message--error {
+  background: white;
+  border: none;
+}
+.el-message--error .el-message__content{
+  color: #FD0053;
+}
+.el-message .el-message__closeBtn {
+  color: rgba(0, 0, 0, 0.9);
+}
