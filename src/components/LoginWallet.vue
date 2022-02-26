@@ -10,7 +10,7 @@ import RightArrow from './icons/IconCommunity.vue'
         Easily login your wallet using your wallet address.
     </div>
     <div class="btn btn-reverse">
-        <RouterLink to="/about">
+        <RouterLink to="/asset">
           Login to existing wallet  
           <RightArrow />
         </RouterLink>

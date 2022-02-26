@@ -62,3 +62,8 @@ a {
 .el-message .el-message__closeBtn {
   color: rgba(0, 0, 0, 0.9);
 }
+
+img svg path {
+  stroke: white;
+}
+    

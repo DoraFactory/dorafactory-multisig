@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink } from 'vue-router'
+import { RouterView } from 'vue-router'
 import StepProgress from '@/components/StepProgress.vue'
 
 </script>
