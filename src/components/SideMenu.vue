@@ -1,6 +1,5 @@
 <script >
 import { RouterLink } from 'vue-router'
-
 export default {
     computed: {
         menu() {
@@ -12,7 +11,7 @@ export default {
           console.log(subpath)
           return subpath ? subpath.substr(1) : 'all'
         }
-    }
+    },
 }
 </script>
 <template>
@@ -24,6 +23,9 @@ export default {
           <p>My Wallet</p>
           <p>0x121sdfdsf787878sdfsfd221</p>
         </div>
+      </div>
+      <div class="new-wallet">
+        + Create a new wallet
       </div>
     </div>
     <RouterLink to="/asset" class="menu-link" v-bind:class="{'menu-selected': menu=='all'}">
@@ -81,8 +83,9 @@ export default {
   border-radius: 0px 50px 0px 0px
 .wallet-info
   display: flex
-  justify-content: center
+  align-items: center
   margin-bottom: 50px
+  flex-direction: column
   .profile
     display: flex
     justify-content: flex-start
@@ -126,4 +129,12 @@ export default {
   font-size: 20px
   padding: 36px 0px 12px 36px
   margin-top: 300px
+.new-wallet
+  background: #FF761C
+  border-radius: 20px
+  padding: 10px 16px
+  color: white
+  margin-top: 20px
+  cursor: pointer
+
 </style>
