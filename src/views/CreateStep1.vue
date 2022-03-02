@@ -2,9 +2,14 @@
 import { RouterLink } from 'vue-router'
 import StepProgress from '@/components/StepProgress.vue'
 import IconPolkadot from '@/components/icons/IconPolkadot.vue'
+import { mapState } from 'vuex'
+
 
 export default {
     components:{StepProgress, IconPolkadot},
+    computed: mapState({
+      network: state => state.network.networkName,
+    }),
     methods: {
         cancel() {
             this.$message(
@@ -26,7 +31,7 @@ export default {
     <StepProgress :current=1 />
     <p class="intro-text">1、Select network on which to create your multisig wallet.The app is currently pointing to</p>
     <div class="selected-network">
-      Dora Factory Testnet[0]
+      {{ network }}
    </div>
   <p class="guide-text">
       2、Please use Polkadot JS Extension.

@@ -20,6 +20,7 @@ a {
   border-radius: 25px;
   margin-top: 40px;
   display: inline-block;
+  cursor: pointer;
 }
 .btn-reverse {
   background-color: white;

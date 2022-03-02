@@ -1,6 +1,10 @@
-<script setup>
+<script>
 import { RouterLink } from 'vue-router'
-import RightArrow from './icons/IconCommunity.vue'
+import RightArrow from './icons/IconRightArrow.vue'
+
+export default {
+    components:{RightArrow}
+}
 </script>
 <template>
 <div class="create-wallet-main blur-card-bg">
