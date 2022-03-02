@@ -5,26 +5,19 @@ import LoginWallet from '@/components/LoginWallet.vue'
 export default {
   data() {
     return {
-      networks: {
-        "127.0.0.1:9944": "LocalChain",
-        "rpc.tophacker.com": "DoraFactory",
-        "rpc.polkadot.io": "Polkadot",
-        "kusama-rpc.polkadot.io": "Kusama"
-      },
+      networks: [
+        {"address": "ws://127.0.0.1:9944", "name":"LocalChain", "logo": "logo.svg"},
+        {"address":"wss://rpc.tophacker.com", "name":"DoraFactory", "logo": "networks/dorafactory.png"},
+        {"address":"wss://rpc.polkadot.io", "name":"Polkadot", "logo": "networks/polkadot.png"},
+        {"address":"wss://kusama-rpc.polkadot.io", "name":"Kusama", "logo": "networks/kusama.png"}
+      ],
       selected: ''
     }
   },
   components: {CreateWallet, LoginWallet },
   watch: {
     selected: function(v) {
-      let network = v
-      if (v.startsWith('127.0') || v.startsWith('localhost')) {
-        network = 'ws://' + v
-      } else {
-        network = 'wss://' + v
-      }
-      this.$store.dispatch(
-        'network/switchNetwork', network)
+      this.$store.dispatch('network/switchNetwork', v)
     }
   }
 }
@@ -35,7 +28,7 @@ export default {
   <div class="header">
     <select v-model="selected">
       <option value="">Select A Chain</option>
-      <option v-for="(v, k, i) in networks" :key="i" :value="k">{{ v }}</option>
+      <option v-for="(network, i) in networks" :key="i" :value="network">{{ network.name }}</option>
     </select>
     <img src="@/assets/logo.svg" />
   </div>

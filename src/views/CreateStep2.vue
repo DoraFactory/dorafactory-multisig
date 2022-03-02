@@ -14,7 +14,6 @@ export default {
 <template>
 <div class="create-wallet-steps">
     <StepProgress :current=2 />
-
   <p>
     1. Name of the new Wallet，The new multisig wallet will only be available on <span class="selected-network">Dora Factory Testnet[0]</span>
   </p>
