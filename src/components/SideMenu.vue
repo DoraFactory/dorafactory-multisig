@@ -8,7 +8,6 @@ export default {
             return ''
           }
           const subpath = path.replace('/asset', '')
-          console.log(subpath)
           return subpath ? subpath.substr(1) : 'all'
         }
     },

@@ -20,6 +20,7 @@ export default {
             allAccounts: [],
             selectedAccount:null,
             show: false,
+            btnText: 'Connect Wallet',
         }
     },
     components:{ StepProgress, IconPolkadot, SelectAccount, Modal },
@@ -28,6 +29,10 @@ export default {
     }),
     methods: {
         async connect() {
+            if (this.btnText === 'Continue') {
+                this.$router.push('/create-wallet/step2')
+                return
+            }
             const extensions = await web3Enable('DoraFactory Multisig')
             if (extensions.length === 0) {
                 this.$message(
@@ -57,16 +62,10 @@ export default {
             }
         },
         change(v) {
-            console.log(v)
+            this.btnText = 'Continue'
         },
         cancel() {
-            this.$message(
-                {
-                    message:'Canceled',
-                    type:'error',
-                    showClose: true
-                }
-            );
+            this.$router.push('/')
         },
     }
 }
@@ -91,7 +90,7 @@ export default {
     </template>
   </Modal>
   <div class="btn-group">
-      <div class="btn" @click="connect">Connect Wallet</div>
+      <div class="btn" @click="connect">{{ btnText }}</div>
       <a @click="cancel">cancel</a>
   </div>
 </div>

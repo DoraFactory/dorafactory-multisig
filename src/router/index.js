@@ -55,6 +55,7 @@ const router = createRouter({
         },
         {
           path: 'step3',
+          name: 'step3',
           component: CreateStep3,
         }
       ]
