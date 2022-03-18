@@ -2,6 +2,8 @@
 import { RouterLink } from 'vue-router'
 import StepProgress from '@/components/StepProgress.vue'
 
+import { createKeyMulti, encodeAddress, sortAddresses} from '@polkadot/util-crypto'
+import { walkBlockDeclarations } from '@vue/compiler-core'
 
 export default {
     data: function() {
@@ -14,10 +16,24 @@ export default {
     },
     components:{StepProgress},
     methods: {
-        next() {
-            console.log(this.$route.params)
+        createWallet() {
+            const SS58Prefix = 0
+            const addresses = this.accounts.map(ele => ele.address)
+            const threshold = 2
+            const multiAddress = createKeyMulti(addresses, this.threshold)
+            // Convert byte array to SS58 encoding.
+            const Ss58Address = encodeAddress(multiAddress, SS58Prefix)
+            console.log(`\nMultisig Address: ${Ss58Address}`)
 
-            //this.$router.push('/create-wallet/step3')
+            let wallets = localStorage.getItem('multisig-wallets') ?
+                        JSON.parse(localStorage.getItem('multisig-wallets')) : []
+            wallets.push({
+              'name': this.walletName,
+              'accounts': this.accounts,
+              'address': Ss58Address
+            })
+            localStorage.setItem('multisig-wallets', JSON.stringify(wallets))
+            this.$router.push('/asset')
         }
     }
 }
@@ -51,7 +67,7 @@ export default {
   </div>
   </div>
   <div class="btn-group">
-      <div class="btn" @click="next">Continue</div>
+      <div class="btn" @click="createWallet">Continue</div>
       <a @click="$router.go(-1)">back</a>
   </div>
 </div>

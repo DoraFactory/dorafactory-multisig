@@ -31,6 +31,15 @@ export default {
             )
         },
         next() {
+            if (!this.walletName) {
+                this.$message(
+                {
+                    message:'Please input a valid wallet name!',
+                    type:'error',
+                    showClose: true
+                })
+                return
+            }
             this.$router.push({
                 name: "step3", 
                 params: {
@@ -46,14 +55,14 @@ export default {
 <template>
 <div class="create-wallet-steps">
     <StepProgress :current=2 />
-  <p>
+  <section>
     1. Name of the new Wallet，The new multisig wallet will only be available on 
     <span class="current-network">Dora Factory Testnet[0]</span>
-  </p>
+  </section>
   <div class="form-input">
       <input class="wallet-name" v-model="walletName" type="text" placeholder="my-wallet-name"/>
   </div>
-  <p>
+  <section>
       2. Your multisig wallet will have one or more owners. Your connected wallet address has been pre-filled as the first owner.
       <div class="adress-form">
           <div class="filled">
@@ -70,14 +79,14 @@ export default {
             </div>
           </div>
       </div>
-  </p>
-  <p>
+  </section>
+  <section>
       3. Any transaction requires the confirmation of:
       <div class="threshold">
         <input type="number" v-model="threshold" />
         <span>out of owner(s)</span>
       </div>
-</p>
+</section>
   <div class="btn-group">
       <div class="btn" @click="next">Continue</div>
       <a @click="cancel">cancel</a>
@@ -158,6 +167,11 @@ input
   font-weight: 500
   input
     margin-right: 10px
-p
+section
   font-weight: 500
+  margin-block-start: 48px
+.form-input
+  margin-top: 16px
+.adress-form
+  margin-top: 14px
 </style>

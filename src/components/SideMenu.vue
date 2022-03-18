@@ -11,6 +11,17 @@ export default {
           return subpath ? subpath.substr(1) : 'all'
         }
     },
+    data: function() {
+      const storedWallets = localStorage.getItem('multisig-wallets')
+      if (!storedWallets) {
+        return {
+          wallets: []
+        }
+      }
+      return {
+        wallets: JSON.parse(storedWallets)
+      }
+    }
 }
 </script>
 <template>
@@ -19,8 +30,8 @@ export default {
       <div class="profile">
         <img src="@/assets/avatar.svg" />
         <div class="name-info">
-          <p>My Wallet</p>
-          <p>0x121sdfdsf787878sdfsfd221</p>
+          <p>{{ wallets[0].name }}</p>
+          <p>{{ wallets[0].address }}</p>
         </div>
       </div>
       <div class="new-wallet">

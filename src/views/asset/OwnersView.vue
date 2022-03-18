@@ -1,11 +1,30 @@
-<script setup>
+<script>
 import { RouterLink } from 'vue-router'
+
+export default {
+    data: function() {
+      const storedWallets = localStorage.getItem('multisig-wallets')
+      if (!storedWallets) {
+        return {
+          wallets: []
+        }
+      }
+      return {
+        wallets: JSON.parse(storedWallets)
+      }
+    }
+}
 </script>
 <template>
 <div class="all-owners">
     <p class="title">OWNERES / </p>
     <div class="owner-card-list">
-        <div class="owner-card">
+        <div class="owner-card" v-for="(account,index) in wallets[0].accounts" :key="index">
+            <img src="@/assets/avatar.svg" />
+            <p> {{ account.name }}</p>
+            <p class="address"> {{ account.address }}</p>
+        </div>
+        <!-- <div class="owner-card">
             <img src="@/assets/avatar.svg" />
             <p> Name test</p>
             <p class="address"> 0xadasdasda</p>
@@ -14,12 +33,7 @@ import { RouterLink } from 'vue-router'
             <img src="@/assets/avatar.svg" />
             <p> Name test</p>
             <p class="address"> 0xadasdasda</p>
-        </div>
-        <div class="owner-card">
-            <img src="@/assets/avatar.svg" />
-            <p> Name test</p>
-            <p class="address"> 0xadasdasda</p>
-        </div>
+        </div> -->
     </div>
 </div>
 </template>
@@ -52,6 +66,9 @@ import { RouterLink } from 'vue-router'
     margin-block-end: 0 px
     color: #0E0E11
     font-size: 16px
+    padding: 0 10px
+    overflow: hidden
+    text-overflow: ellipsis
     .address
       font-size: 14px
 </style>
