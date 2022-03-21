@@ -1,3 +1,13 @@
+<script>
+export default {
+    emits: ["done"],
+    props: {
+        address: String,
+        networkName: String,
+    }
+}
+</script>
+
 <template>
     <div class="receive-assets">
         <h2>Receive Assets</h2>
@@ -8,17 +18,17 @@
                 </svg>
             </span>
             <div class="note-text">
-                Please double check the address and only send funds to an address on the Dora Factory network.
+                Please double check the address and only send funds to an address on the {{ networkName }} network.
             </div>
         </div>
         <div class="description">
             This is the address of your wallet.Deposit funds by scanning the QR code or copying the address below.
-            Only send Dora factory Network and assets to this address!
+            Only send {{ networkName }} Network and assets to this address!
         </div>
         <div class="address-info">
-            0x121212
+            {{address}}
         </div>
-        <div class="btn stretch-btn">Done</div>
+        <div class="btn stretch-btn" @click="this.$emit('done')">Done</div>
     </div>
 </template>
 <style lang="stylus" scoped>

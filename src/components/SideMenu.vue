@@ -1,5 +1,7 @@
 <script >
 import { RouterLink } from 'vue-router'
+import { mapGetters } from 'vuex'
+
 export default {
     computed: {
         menu() {
@@ -9,7 +11,12 @@ export default {
           }
           const subpath = path.replace('/asset', '')
           return subpath ? subpath.substr(1) : 'all'
-        }
+        },
+        ...mapGetters(
+            {
+              wallet: 'network/selectedWallet'
+            }
+        )
     },
     data: function() {
       const storedWallets = localStorage.getItem('multisig-wallets')
@@ -30,8 +37,8 @@ export default {
       <div class="profile">
         <img src="@/assets/avatar.svg" />
         <div class="name-info">
-          <p>{{ wallets[0].name }}</p>
-          <p>{{ wallets[0].address }}</p>
+          <p>{{ wallet.name }}</p>
+          <p>{{ wallet.address }}</p>
         </div>
       </div>
       <div class="new-wallet">

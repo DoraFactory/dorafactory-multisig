@@ -28,6 +28,10 @@ npm run dev
 npm run build
 ```
 
+Build issue:
+https://github.com/vitejs/vite/issues/7364
+https://github.com/polkadot-js/ui/issues/611
+
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh

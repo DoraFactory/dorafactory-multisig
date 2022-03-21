@@ -24,16 +24,6 @@ export default {
             <p> {{ account.name }}</p>
             <p class="address"> {{ account.address }}</p>
         </div>
-        <!-- <div class="owner-card">
-            <img src="@/assets/avatar.svg" />
-            <p> Name test</p>
-            <p class="address"> 0xadasdasda</p>
-        </div>
-        <div class="owner-card">
-            <img src="@/assets/avatar.svg" />
-            <p> Name test</p>
-            <p class="address"> 0xadasdasda</p>
-        </div> -->
     </div>
 </div>
 </template>

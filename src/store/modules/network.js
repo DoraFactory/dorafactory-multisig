@@ -5,7 +5,8 @@ const state = () => ({
         name: ''
     },
     account: null,
-    connectStatus: null
+    connectStatus: null,
+    wallet: null,
 })
 
 // getters
@@ -14,12 +15,15 @@ const getters = {
         if (state.connectStatus != 'successful' || !state.selected) {
             return {}
         }
-        const addr = state.account ? state.account.address: ''
+        const addr = state.account ? state.account.address: state.wallet ? state.wallet.owner : ''
         const display =  `${state.selected.name}:${addr.substr(0, 5)}...${addr.substring(addr.length-5)}`
         return {
             display,
             logo: state.selected.logo
         }
+    },
+    selectedWallet(state, getters) {
+      return state.wallet
     }
 }
 
@@ -51,12 +55,16 @@ const mutations = {
   setAccount(state, account) {
       state.account = account
   },
-  setSelected (state, network ) {
+  setSelected(state, network ) {
     state.selected = network
   },
 
-  setConnectStatus (state, status) {
+  setConnectStatus(state, status) {
     state.connectStatus = status
+  },
+
+  setWallet(state, wallet) {
+    state.wallet = wallet
   }
 }
 

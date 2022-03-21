@@ -2,12 +2,43 @@
 import { RouterLink } from 'vue-router'
 import Modal from '@/components/Modal.vue'
 import ReceiveAssets from '@/components/ReceiveAssets.vue'
+import { mapGetters } from 'vuex'
+import { formatBalance } from '@polkadot/util'
+
 
 export default {
     components: {Modal, ReceiveAssets},
+    computed: {
+        ...mapGetters(
+            {
+              wallet: 'network/selectedWallet'
+            }
+        )
+    },
     data() {
+      const registry = window.api ? window.api.registry : null
       return {
-        show: false
+        show: false,
+        unit: registry ? registry.chainTokens[0].toUpperCase() : '',
+        decimal: registry ? registry.chainDecimals[0]: 0,
+        balance: '',
+        networkName: '',
+        marketValue: '--'
+      }
+    },
+    mounted: async function() {
+      if (window.api) {
+        this.networkName = this.$store.state.network.selected.name
+        formatBalance.setDefaults(
+          {
+            'decimals': this.decimal,
+            'unit': this.unit
+          }
+        )
+        const res = await window.api.query.system.account(this.wallet.address)
+        this.balance = formatBalance(res.data.free)
+        // TODO: add a stable interface to fetch the realtime market value
+        this.marketValue = 'N/A'
       }
     },
     methods: {
@@ -22,47 +53,47 @@ export default {
 <div class="all-assets">
     <p class="title">ASSETS / COINS</p>
     <div class="asset-card-list">
-        <div class="asset-card">
+        <div v-if="unit == 'DOT'" class="asset-card">
             <div class="asset-network">
                 <img src="@/assets/networks/polkadot.png" />
                 <span> Polkadot </span>
             </div>
             <div class="asset-detail">
                 <p class="detail-label">BALANCE</p>
-                <p class="detail-value">10443.11 DOT</p>
+                <p class="detail-value">{{ unit }}</p>
                 <p class="detail-label">VALUE</p>
-                <p class="detail-value">$1,343</p>
-                <span class="receive-btn">
+                <p class="detail-value">{{ marketValue }}</p>
+                <span class="receive-btn" @click="show=true">
                     ↙ Receive
                 </span>
             </div>
         </div>
-        <div class="asset-card">
+        <div v-if="unit == 'KSM'" class="asset-card">
             <div class="asset-network">
                 <img src="@/assets/networks/kusama.png" />
                 <span> KUSAMA </span>
             </div>
             <div class="asset-detail">
                 <p class="detail-label">BALANCE</p>
-                <p class="detail-value">10443.11 KSM</p>
+                <p class="detail-value">{{ balance }}</p>
                 <p class="detail-label">VALUE</p>
-                <p class="detail-value">$1,343</p>
-                <span class="receive-btn">
+                <p class="detail-value">{{ marketValue }}</p>
+                <span class="receive-btn" @click="show=true">
                     ↙ Receive
                 </span>
             </div>
  
         </div>
-        <div class="asset-card">
+        <div v-if="unit == 'UNIT'" class="asset-card">
             <div class="asset-network">
                 <img src="@/assets/networks/dorafactory.png" />
                 <span> Dora Factory </span>
             </div>
             <div class="asset-detail">
                 <p class="detail-label">BALANCE</p>
-                <p class="detail-value">10443.11 DORA</p>
+                <p class="detail-value">{{ balance }}</p>
                 <p class="detail-label">VALUE</p>
-                <p class="detail-value">$1,343</p>
+                <p class="detail-value">{{ marketValue }}</p>
                 <span class="receive-btn" @click="show=true">
                     ↙ Receive
                 </span>
@@ -72,7 +103,7 @@ export default {
     </div>
     <Modal :showModal="show" @close="show=false">
         <template v-slot:content>
-        <ReceiveAssets />
+        <ReceiveAssets @done="show=false" :address="wallet.address" :networkName="networkName" />
         </template>
     </Modal>
 

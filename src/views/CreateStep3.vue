@@ -19,18 +19,16 @@ export default {
         createWallet() {
             const SS58Prefix = 0
             const addresses = this.accounts.map(ele => ele.address)
-            const threshold = 2
             const multiAddress = createKeyMulti(addresses, this.threshold)
             // Convert byte array to SS58 encoding.
             const Ss58Address = encodeAddress(multiAddress, SS58Prefix)
-            console.log(`\nMultisig Address: ${Ss58Address}`)
-
             let wallets = localStorage.getItem('multisig-wallets') ?
                         JSON.parse(localStorage.getItem('multisig-wallets')) : []
             wallets.push({
               'name': this.walletName,
               'accounts': this.accounts,
-              'address': Ss58Address
+              'address': Ss58Address,
+              'owner': this.$store.state.network.account.address
             })
             localStorage.setItem('multisig-wallets', JSON.stringify(wallets))
             this.$router.push('/asset')

@@ -1,6 +1,27 @@
-<script setup>
-import { RouterLink } from 'vue-router'
+<script>
 import RightArrow from './icons/IconRightArrow.vue'
+
+export default {
+    components: {RightArrow},
+    methods: {
+        loadWallet() {
+            const storedWallets = localStorage.getItem('multisig-wallets')
+            if (!storedWallets) {
+            this.$message(
+                {
+                message:'No wallets found!',
+                type:'error',
+                showClose: true
+                }
+            )
+            this.$router.push('/')
+            return
+            }
+            this.$store.commit('network/setWallet', JSON.parse(storedWallets)[0])
+            this.$router.push('/asset')
+        }
+    }
+}
 </script>
 <template>
 <div class="login-wallet-main blur-card-bg">
@@ -10,10 +31,10 @@ import RightArrow from './icons/IconRightArrow.vue'
         Easily login your wallet using your wallet address.
     </div>
     <div class="btn btn-reverse">
-        <RouterLink to="/asset">
+        <div @click="loadWallet">
           Login to existing wallet  
           <RightArrow />
-        </RouterLink>
+        </div>
     </div>
 </div>
 </template>
