@@ -31,7 +31,10 @@ const getters = {
 const actions = {
   async switchNetwork ({ commit, state }, network) {
     commit('setConnectStatus', null)
-    // empty cart
+    // empty connection
+    if(window.api && window.api.isConnected) {
+      await window.api.disconnect()
+    }
     window.api = null
     try {
         const wsProvider = new WsProvider(network.address)

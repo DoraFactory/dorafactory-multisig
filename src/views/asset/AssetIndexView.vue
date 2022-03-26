@@ -55,6 +55,8 @@ export default {
   padding: 42px 36px
   display: flex
   justify-content: space-between
+  #network-logo
+    margin-right: 50px
   span
     font-size: 32px
     font-weight: 800

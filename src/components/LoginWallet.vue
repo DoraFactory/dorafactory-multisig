@@ -9,9 +9,9 @@ export default {
             if (!storedWallets) {
             this.$message(
                 {
-                message:'No wallets found!',
-                type:'error',
-                showClose: true
+                    message:'No wallets found!',
+                    type:'error',
+                    showClose: true
                 }
             )
             this.$router.push('/')

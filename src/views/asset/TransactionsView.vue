@@ -1,46 +1,145 @@
-<script setup>
-import { RouterLink } from 'vue-router'
+<script>
+import { mapGetters } from 'vuex'
+import AddressInfo from '@/components/AddressInfo.vue'
+import { sortAddresses } from '@polkadot/util-crypto'
+import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp'
+import { toSubstrateAddr } from '@/utils/substrate.js'
+
+
+export default {
+  components: {AddressInfo},
+  computed: {
+      ...mapGetters(
+          {
+            wallet: 'network/selectedWallet'
+          }
+      ),
+      transactions: function() {
+        if(this.tabIndex == 0) {
+          return this.pendingTrans
+        }
+        if(this.tabIndex == 1) {
+          return this.createdTrans
+        }
+        return this.completedTrans
+      }
+    },
+    data: function() {
+      return {
+        pendingTrans: {},
+        createdTrans: {},
+        completedTrans: {},
+        calls: {},
+        tabIndex: 0,
+        tabs:["Pending", "Created", "Completed"]
+      }
+    },
+    methods: {
+      callDetail(hash) {
+        const call = this.calls[hash]
+        if (!Array.isArray(call)) {
+          return null
+        }
+        return call[0]
+      },
+      async approveTrans(hash) {
+        const trans = this.transactions[hash]
+        const otherAddresses = this.wallet.accounts.filter(
+          (acct) => {
+            return acct.address != this.wallet.owner
+          }
+        ).map((acct)=>{return acct.address})
+        const otherSignatories = sortAddresses(otherAddresses, 0)
+        await web3Enable('DoraFactory Multisig')
+        const sender = this.wallet.owner
+        const injector = await web3FromAddress(sender)
+        const extrinsic = window.api.tx.multisig.approveAsMulti(
+          this.wallet.threshold,
+          otherSignatories,
+          trans.when,
+          hash,
+          40918010
+        )
+        // const info =  await extrinsic.paymentInfo(sender)
+        // console.log(`class=${info}`)
+        extrinsic.signAndSend(sender, { signer: injector.signer }, 
+        ({events = [],status}) => { 
+          console.log(`Current status is ${status}`);
+
+    if (status.isFinalized) {
+      console.log(`Transaction included at blockHash ${status.asFinalized}`)
+
+      // Loop through Vec<EventRecord> to display all events
+      events.forEach(({ phase, event: { data, method, section } }) => {
+        console.log(`\t' ${phase}: ${section}.${method}:: ${data}`)
+      })} 
+        })
+      }
+    },
+    mounted: async function() {
+      if (window.api) {
+        const myMultisigs = await window.api.query.multisig.multisigs.entries(this.wallet.address)
+        myMultisigs.forEach(([key, exposure]) => {
+          const keys = key.toHuman()
+          const trans = exposure.toJSON()
+          // as polkdot extension provides us substrate address, we have to convert first to compare
+          const owner = toSubstrateAddr(trans.depositor)
+          // group transactions by depositor
+          if(owner == this.wallet.owner) {
+            this.createdTrans[keys[1]] = trans
+          } else {
+            this.pendingTrans[keys[1]] = trans
+          }
+        })
+        const myCalls = await window.api.query.multisig.calls.entries()
+        myCalls.forEach(([key, exposure]) => {
+          const keys = key.toHuman()
+          const callInfo = exposure.toHuman()
+          this.calls[keys[0]] = callInfo
+        })
+      }
+    }
+}
 </script>
 <template>
 <div class="all-transactions">
     <p class="title">TRANSACTIONS /</p>
     <div class="options">
         <ul>
-            <li class="selected">Pending</li>
-            <li>Created</li>
-            <li>Completed</li>
+            <li v-bind:class="{'selected': tabIndex==i}" v-for="(tab, i) in tabs" :key="i" @click="this.tabIndex=i">{{ tab }}</li>
         </ul>
         <div class="btn new-transaction">
             ↗ New transaction
         </div>
     </div>
     <div class="transaction-card-list">
-        <div class="transaction-card">
+        <div v-for="(trans, hash) in transactions" :key="hash" class="transaction-card">
             <div class="transaction-summary">
               <p>
-                <span class="summary-label">CALL DATA:</span>
-                <span class="summary-value">0xhhuadashua</span>
+                <span class="summary-label">CALL HASH:</span>
+                <span class="summary-value">{{ hash }}</span>
               </p>
               <p>
                 <span class="summary-label">TIME:</span>
-                <span class="summary-value">8 months ago</span>
+                <span class="summary-value">{{ trans.when }}</span>
               </p>
               <p>
-                <span class="summary-label">ADDRESS:</span>
-                <span class="summary-value">0xh...ashua</span>
+                <span class="summary-label">Depositor:</span>
+                <AddressInfo :address="trans.depositor" />
               </p>
-              <p>
+              <p v-if="callDetail(hash)">
                 <span class="summary-label">PALLET/MODULEID:</span>
-                <span class="summary-value">multisig pallet</span>
+                <span class="summary-value">{{ callDetail(hash).section }}/{{ callDetail(hash).method }}</span>
               </p>
-              <p>
+              <p v-if="callDetail(hash)">
                 <span class="summary-label">PARAMETER:</span>
-                <span class="summary-value">round_id:2</span>
+                <span class="summary-value">{{ callDetail(hash).args }}}</span>
               </p>
             </div>
             <div class="transaction-status">
-              <div class="status-bar success">
-                  Pending approval
+              <div class="status-bar">
+                  <span>Pending approval</span>
+                  <div v-if="tabIndex==0" class="approve-btn" @click="approveTrans(hash)">Approve</div>
               </div>
               <p class="status-summary">1 out of 2 owners</p>
               <div class="progress-bar">
@@ -51,26 +150,22 @@ import { RouterLink } from 'vue-router'
                 </div>
                 <div>
                 <div class="progress-confirmed">
-                  <div class="circle-sign empty"></div>
+                  <div class="circle-sign"></div>
                   <div class="">Confirmed</div>
                   <span class="connect-line waiting"></span>
                 </div>
                 </div>
-                <div class="progress-rejected">Rejected</div>
+                <div class="progress-executed inactive">
+                  <div class="circle-sign empty"></div>
+                  <div class="">Executed</div>
+                </div>
               </div>
               <div class="users-list">
-                <div class="user-info">
+                <div class="user-info" v-for="(addr, i) in trans.approvals" :key="i">
                   <img src="@/assets/avatar.svg" />
                   <div class="user-profile">
-                    <p>adasds</p>
-                    <p>adasds</p>
-                  </div>
-                </div>
-                <div class="user-info">
-                  <img src="@/assets/avatar.svg" />
-                  <div class="user-profile">
-                    <p>adasds</p>
-                    <p>adasds</p>
+                    <p>Account</p>
+                    <p><AddressInfo :address="addr" /></p>
                   </div>
                 </div>
               </div>
@@ -101,6 +196,7 @@ import { RouterLink } from 'vue-router'
       font-weight: 600
       color: rgba(14, 14, 17, 0.5)
       margin-right: 20px
+      cursor pointer
     .selected
       color: #FF761C
   .new-transaction
@@ -116,14 +212,21 @@ import { RouterLink } from 'vue-router'
   border-radius: 34px
   padding: 30px
   display: flex
+  margin-bottom: 20px
 .transaction-summary
   font-size: 16px
   padding-right: 100px
+  max-width: 35%
+  overflow: hidden
   .summary-label
     font-weight: 600
     margin-right: 5px
 .transaction-status
+  padding-left: 100px
   .status-bar
+    display: flex
+    justify-content: space-between
+    align-items: center
     font-weight: 600
     color: #FF761C
     background: url('@/assets/pending.svg') no-repeat left center
@@ -134,6 +237,13 @@ import { RouterLink } from 'vue-router'
     &.success
       color: #00B272
       background-image: url('@/assets/success.svg')
+  .approve-btn
+    background: #ebebeb
+    border: 3px solid #FFFFFF
+    border-radius: 20px
+    color: #00B272
+    padding: 5px 10px
+    cursor: pointer
 .progress-bar
   display: inline-flex
   color: #00B272
@@ -145,9 +255,11 @@ import { RouterLink } from 'vue-router'
     margin: 0 6px
     &.waiting
       border-bottom: 1px dotted #B7B7B8
-  .progress-created, .progress-confirmed
+  .progress-created, .progress-confirmed, .progress-executed
     display: inline-flex
     align-items: center
+    &.inactive
+      color: rgba(14, 14, 17, 0.3)
   .circle-sign
     width: 12px
     height: 12px
@@ -194,6 +306,8 @@ import { RouterLink } from 'vue-router'
     .user-profile
       font-size: 12px
       margin-left: 8px
+      p
+        display: flex
   img
     width: 30px
     height: 30px

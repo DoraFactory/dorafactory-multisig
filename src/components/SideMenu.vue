@@ -1,34 +1,34 @@
 <script >
 import { RouterLink } from 'vue-router'
 import { mapGetters } from 'vuex'
+import AddressInfo from './AddressInfo.vue'
 
 export default {
     computed: {
         menu() {
-          const path = this.$router.currentRoute.value.path
-          if(!path.includes('/asset')) {
-            return ''
-          }
-          const subpath = path.replace('/asset', '')
-          return subpath ? subpath.substr(1) : 'all'
-        },
-        ...mapGetters(
-            {
-              wallet: 'network/selectedWallet'
+            const path = this.$router.currentRoute.value.path;
+            if (!path.includes("/asset")) {
+                return "";
             }
-        )
+            const subpath = path.replace("/asset", "");
+            return subpath ? subpath.substr(1) : "all";
+        },
+        ...mapGetters({
+            wallet: "network/selectedWallet"
+        })
     },
-    data: function() {
-      const storedWallets = localStorage.getItem('multisig-wallets')
-      if (!storedWallets) {
-        return {
-          wallets: []
+    data: function () {
+        const storedWallets = localStorage.getItem("multisig-wallets");
+        if (!storedWallets) {
+            return {
+                wallets: []
+            };
         }
-      }
-      return {
-        wallets: JSON.parse(storedWallets)
-      }
-    }
+        return {
+            wallets: JSON.parse(storedWallets)
+        };
+    },
+    components: { AddressInfo }
 }
 </script>
 <template>
@@ -36,12 +36,12 @@ export default {
     <div class="wallet-info">
       <div class="profile">
         <img src="@/assets/avatar.svg" />
-        <div class="name-info">
+        <div v-if="wallet" class="name-info">
           <p>{{ wallet.name }}</p>
-          <p>{{ wallet.address }}</p>
+          <p><AddressInfo :address="wallet.address" /></p>
         </div>
       </div>
-      <div class="new-wallet">
+      <div class="new-wallet" @click="this.$router.push('/create-wallet')">
         + Create a new wallet
       </div>
     </div>

@@ -1,6 +1,5 @@
 # dorafactory-multisig
-
-This template should help get you started developing with Vue 3 in Vite.
+This poject is an MVP based on [this design](https://www.figma.com/file/NBavL709zClLkDMAqP1maR/Substrate-Multisig-Frontend-MVP?node-id=225%3A1575). The frontend framework consists of Vue3+Vite+ElementPlus.
 
 ## Recommended IDE Setup
 
@@ -28,12 +27,14 @@ npm run dev
 npm run build
 ```
 
-Build issue:
-https://github.com/vitejs/vite/issues/7364
-https://github.com/polkadot-js/ui/issues/611
-
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh
 npm run lint
 ```
+
+## Future work
+1. Vue build does not support some of our polkadot packages, it'll always fail. This is a known issue to be fixed.
+https://github.com/vitejs/vite/issues/7364 Currently, our project can only be view under development mode.
+2. You may have found that our account icon/avatar won't change, as the `vue-identicon` dose not support Vue3 yet. 
+It's logged https://github.com/polkadot-js/ui/issues/611, we'll update our code once it's upgraded. Also, we can add PR for it when we're free.

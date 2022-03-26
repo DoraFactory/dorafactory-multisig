@@ -3,7 +3,6 @@ import { RouterLink } from 'vue-router'
 import StepProgress from '@/components/StepProgress.vue'
 
 import { createKeyMulti, encodeAddress, sortAddresses} from '@polkadot/util-crypto'
-import { walkBlockDeclarations } from '@vue/compiler-core'
 
 export default {
     data: function() {
@@ -28,6 +27,7 @@ export default {
               'name': this.walletName,
               'accounts': this.accounts,
               'address': Ss58Address,
+              'threshold': this.threshold,
               'owner': this.$store.state.network.account.address
             })
             localStorage.setItem('multisig-wallets', JSON.stringify(wallets))
