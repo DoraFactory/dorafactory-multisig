@@ -5,16 +5,14 @@ import IconPolkadot from '@/components/icons/IconPolkadot.vue'
 import { mapState } from 'vuex'
 import {
   web3Accounts,
-  web3Enable,
-  web3FromAddress,
-  web3ListRpcProviders,
-  web3UseRpcProvider
+  web3Enable
 } from '@polkadot/extension-dapp'
 import SelectAccount from '../components/SelectAccount.vue'
-import Modal from '@/components/Modal.vue'
+import SimpleModal from '@/components/SimpleModal.vue'
 
 
 export default {
+    components:{ StepProgress, IconPolkadot, SelectAccount, SimpleModal },
     data: function() {
         return {
             allAccounts: [],
@@ -23,7 +21,6 @@ export default {
             btnText: 'Connect Wallet',
         }
     },
-    components:{ StepProgress, IconPolkadot, SelectAccount, Modal },
     computed: mapState({
       network: state => state.network.selected,
     }),
@@ -71,29 +68,42 @@ export default {
 }
 </script>
 <template>
-<div class="create-wallet-steps">
-    <StepProgress :current=1 />
-    <p class="intro-text">1、Select network on which to create your multisig wallet.The app is currently pointing to</p>
+  <div class="create-wallet-steps">
+    <StepProgress :current="1" />
+    <p class="intro-text">
+      1、Select network on which to create your multisig wallet.The app is currently pointing to
+    </p>
     <div class="selected-network">
       {{ network.name }}
-   </div>
-  <p class="guide-text">
+    </div>
+    <p class="guide-text">
       2、Please use Polkadot JS Extension.
-  </p>
-  <div class="extension-btn">
+    </p>
+    <div class="extension-btn">
       <IconPolkadot />
       Polkadot
-  </div>
-  <Modal :showModal="show" @close="show=false">
-    <template v-slot:content>
-    <SelectAccount :accounts="allAccounts" @change="change" />
-    </template>
-  </Modal>
-  <div class="btn-group">
-      <div class="btn" @click="connect">{{ btnText }}</div>
+    </div>
+    <SimpleModal
+      :show-modal="show"
+      @close="show=false"
+    >
+      <template #content>
+        <SelectAccount
+          :accounts="allAccounts"
+          @change="change"
+        />
+      </template>
+    </SimpleModal>
+    <div class="btn-group">
+      <div
+        class="btn"
+        @click="connect"
+      >
+        {{ btnText }}
+      </div>
       <a @click="cancel">cancel</a>
+    </div>
   </div>
-</div>
 </template>
 <style lang="stylus" scoped>
 @import '@/assets/base.css'

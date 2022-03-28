@@ -1,20 +1,13 @@
 <script>
 import { RouterLink } from 'vue-router'
-import Modal from '@/components/Modal.vue'
+import SimpleModal from '@/components/SimpleModal.vue'
 import ReceiveAssets from '@/components/ReceiveAssets.vue'
 import { mapGetters } from 'vuex'
 import { formatBalance } from '@polkadot/util'
 
 
 export default {
-    components: {Modal, ReceiveAssets},
-    computed: {
-        ...mapGetters(
-            {
-              wallet: 'network/selectedWallet'
-            }
-        )
-    },
+    components: {SimpleModal, ReceiveAssets},
     data() {
       const registry = window.api ? window.api.registry : null
       return {
@@ -25,6 +18,13 @@ export default {
         networkName: '',
         marketValue: '--'
       }
+    },
+    computed: {
+        ...mapGetters(
+            {
+              wallet: 'network/selectedWallet'
+            }
+        )
     },
     mounted: async function() {
       if (window.api) {
@@ -50,64 +50,112 @@ export default {
 
 </script>
 <template>
-<div class="all-assets">
-    <p class="title">ASSETS / COINS</p>
+  <div class="all-assets">
+    <p class="title">
+      ASSETS / COINS
+    </p>
     <div class="asset-card-list">
-        <div v-if="unit == 'DOT'" class="asset-card">
-            <div class="asset-network">
-                <img src="@/assets/networks/polkadot.png" />
-                <span> Polkadot </span>
-            </div>
-            <div class="asset-detail">
-                <p class="detail-label">BALANCE</p>
-                <p class="detail-value">{{ unit }}</p>
-                <p class="detail-label">VALUE</p>
-                <p class="detail-value">{{ marketValue }}</p>
-                <span class="receive-btn" @click="show=true">
-                    ↙ Receive
-                </span>
-            </div>
+      <div
+        v-if="unit == 'DOT'"
+        class="asset-card"
+      >
+        <div class="asset-network">
+          <img src="@/assets/networks/polkadot.png">
+          <span> Polkadot </span>
         </div>
-        <div v-if="unit == 'KSM'" class="asset-card">
-            <div class="asset-network">
-                <img src="@/assets/networks/kusama.png" />
-                <span> KUSAMA </span>
-            </div>
-            <div class="asset-detail">
-                <p class="detail-label">BALANCE</p>
-                <p class="detail-value">{{ balance }}</p>
-                <p class="detail-label">VALUE</p>
-                <p class="detail-value">{{ marketValue }}</p>
-                <span class="receive-btn" @click="show=true">
-                    ↙ Receive
-                </span>
-            </div>
- 
+        <div class="asset-detail">
+          <p class="detail-label">
+            BALANCE
+          </p>
+          <p class="detail-value">
+            {{ unit }}
+          </p>
+          <p class="detail-label">
+            VALUE
+          </p>
+          <p class="detail-value">
+            {{ marketValue }}
+          </p>
+          <span
+            class="receive-btn"
+            @click="show=true"
+          >
+            ↙ Receive
+          </span>
         </div>
-        <div v-if="unit == 'UNIT'" class="asset-card">
-            <div class="asset-network">
-                <img src="@/assets/networks/dorafactory.png" />
-                <span> Dora Factory </span>
-            </div>
-            <div class="asset-detail">
-                <p class="detail-label">BALANCE</p>
-                <p class="detail-value">{{ balance }}</p>
-                <p class="detail-label">VALUE</p>
-                <p class="detail-value">{{ marketValue }}</p>
-                <span class="receive-btn" @click="show=true">
-                    ↙ Receive
-                </span>
-            </div>
- 
+      </div>
+      <div
+        v-if="unit == 'KSM'"
+        class="asset-card"
+      >
+        <div class="asset-network">
+          <img src="@/assets/networks/kusama.png">
+          <span> KUSAMA </span>
         </div>
+        <div class="asset-detail">
+          <p class="detail-label">
+            BALANCE
+          </p>
+          <p class="detail-value">
+            {{ balance }}
+          </p>
+          <p class="detail-label">
+            VALUE
+          </p>
+          <p class="detail-value">
+            {{ marketValue }}
+          </p>
+          <span
+            class="receive-btn"
+            @click="show=true"
+          >
+            ↙ Receive
+          </span>
+        </div>
+      </div>
+      <div
+        v-if="unit == 'UNIT'"
+        class="asset-card"
+      >
+        <div class="asset-network">
+          <img src="@/assets/networks/dorafactory.png">
+          <span> Dora Factory </span>
+        </div>
+        <div class="asset-detail">
+          <p class="detail-label">
+            BALANCE
+          </p>
+          <p class="detail-value">
+            {{ balance }}
+          </p>
+          <p class="detail-label">
+            VALUE
+          </p>
+          <p class="detail-value">
+            {{ marketValue }}
+          </p>
+          <span
+            class="receive-btn"
+            @click="show=true"
+          >
+            ↙ Receive
+          </span>
+        </div>
+      </div>
     </div>
-    <Modal :showModal="show" @close="show=false">
-        <template v-slot:content>
-        <ReceiveAssets @done="show=false" :address="wallet.address" :networkName="networkName" />
-        </template>
-    </Modal>
-
-</div>
+    <SimpleModal
+      :show-modal="show"
+      @close="show=false"
+    >
+      <template #content>
+        <ReceiveAssets
+          :address="wallet.address"
+          :network-name="networkName"
+          @done="show=false"
+        />
+      </template>
+    </SimpleModal>
+  </div>
 </template>
 <style lang="stylus" scoped>
 @import '@/assets/base.css'

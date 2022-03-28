@@ -1,11 +1,39 @@
+<script>
+export default {
+    props: {
+        current: {
+            type: Number,
+            default: 1
+        }
+    }
+}
+</script>
 <template>
-<div class="step-progress">
-  <div class="number-in-circle">1</div>
-  <div class="connector-line" v-bind:class="{ active: current >= 2}"></div>
-  <div class="number-in-circle" v-bind:class="{ 'inactive-circle': current < 2}">2</div>
-  <div class="connector-line" v-bind:class="{ active: current == 3}"></div>
-  <div class="number-in-circle" v-bind:class="{ 'inactive-circle': current < 3}">3</div>
-</div>
+  <div class="step-progress">
+    <div class="number-in-circle">
+      1
+    </div>
+    <div
+      class="connector-line"
+      :class="{ active: current >= 2}"
+    />
+    <div
+      class="number-in-circle"
+      :class="{ 'inactive-circle': current < 2}"
+    >
+      2
+    </div>
+    <div
+      class="connector-line"
+      :class="{ active: current == 3}"
+    />
+    <div
+      class="number-in-circle"
+      :class="{ 'inactive-circle': current < 3}"
+    >
+      3
+    </div>
+  </div>
 </template>
 <style lang="stylus" scoped>
 @import '@/assets/base.css'
@@ -24,13 +52,3 @@
 
 
 </style>
-<script>
-export default {
-    props: {
-        current: {
-            type: Number,
-            default: 1
-        }
-    }
-}
-</script>

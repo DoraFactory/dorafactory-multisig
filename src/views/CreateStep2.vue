@@ -1,8 +1,10 @@
 <script>
 import { RouterLink } from 'vue-router'
 import StepProgress from '@/components/StepProgress.vue'
+import { mapState } from 'vuex'
 
 export default {
+    components:{StepProgress},
     data: function() {
         const accounts = []
         const selectedAcct = this.$store.state.network.account
@@ -20,7 +22,9 @@ export default {
             threshold: 1
         }
     },
-    components:{StepProgress},
+    computed: mapState({
+      network: state => state.network.selected,
+    }),
     methods: {
         addAccount() {
             this.accounts.push(
@@ -53,45 +57,73 @@ export default {
 }
 </script>
 <template>
-<div class="create-wallet-steps">
-    <StepProgress :current=2 />
-  <section>
-    1. Name of the new Wallet，The new multisig wallet will only be available on 
-    <span class="current-network">Dora Factory Testnet[0]</span>
-  </section>
-  <div class="form-input">
-      <input class="wallet-name" v-model="walletName" type="text" placeholder="my-wallet-name"/>
-  </div>
-  <section>
+  <div class="create-wallet-steps">
+    <StepProgress :current="2" />
+    <section>
+      1. Name of the new Wallet，The new multisig wallet will only be available on 
+      <span class="current-network">{{ network.name }}</span>
+    </section>
+    <div class="form-input">
+      <input
+        v-model="walletName"
+        class="wallet-name"
+        type="text"
+        placeholder="my-wallet-name"
+      >
+    </div>
+    <section>
       2. Your multisig wallet will have one or more owners. Your connected wallet address has been pre-filled as the first owner.
       <div class="adress-form">
-          <div class="filled">
-            <div class="adress-titles">
-                <div>NAME</div>
-                <div>ADDRESS</div>
-            </div>
-            <div class="address-info" v-for="(account, index) in accounts" :key="index">
-                <input type="text" v-model="account.name" :disabled="index==0" />
-                <input type="text" v-model="account.address" :disabled="index==0" />
-            </div>
-            <div class="add-link" @click="addAccount">
-                + Add another owner
-            </div>
+        <div class="filled">
+          <div class="adress-titles">
+            <div>NAME</div>
+            <div>ADDRESS</div>
           </div>
+          <div
+            v-for="(account, index) in accounts"
+            :key="index"
+            class="address-info"
+          >
+            <input
+              v-model="account.name"
+              type="text"
+              :disabled="index==0"
+            >
+            <input
+              v-model="account.address"
+              type="text"
+              :disabled="index==0"
+            >
+          </div>
+          <div
+            class="add-link"
+            @click="addAccount"
+          >
+            + Add another owner
+          </div>
+        </div>
       </div>
-  </section>
-  <section>
+    </section>
+    <section>
       3. Any transaction requires the confirmation of:
       <div class="threshold">
-        <input type="number" v-model="threshold" />
+        <input
+          v-model="threshold"
+          type="number"
+        >
         <span>out of owner(s)</span>
       </div>
-</section>
-  <div class="btn-group">
-      <div class="btn" @click="next">Continue</div>
+    </section>
+    <div class="btn-group">
+      <div
+        class="btn"
+        @click="next"
+      >
+        Continue
+      </div>
       <a @click="cancel">cancel</a>
+    </div>
   </div>
-</div>
 </template>
 <style lang="stylus" scoped>
 @import '@/assets/base.css'

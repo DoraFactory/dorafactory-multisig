@@ -8,190 +8,224 @@ import { toSubstrateAddr } from '@/utils/substrate.js'
 
 export default {
   components: {AddressInfo},
-  computed: {
-      ...mapGetters(
-          {
-            wallet: 'network/selectedWallet'
-          }
-      ),
-      transactions: function() {
-        if(this.tabIndex == 0) {
-          return this.pendingTrans
-        }
-        if(this.tabIndex == 1) {
-          return this.createdTrans
-        }
-        return this.completedTrans
-      }
-    },
-    data: function() {
-      return {
-        pendingTrans: {},
-        createdTrans: {},
-        completedTrans: {},
-        calls: {},
-        tabIndex: 0,
-        tabs:["Pending", "Created", "Completed"]
-      }
-    },
-    methods: {
-      callDetail(hash) {
-        const call = this.calls[hash]
-        if (!Array.isArray(call)) {
-          return null
-        }
-        return call[0]
-      },
-      openTrans() {
-        window.location.href='https://polkadot.js.org/apps'
-      },
-      async approveTrans(hash) {
-        const trans = this.transactions[hash]
-        const otherAddresses = this.wallet.accounts.filter(
-          (acct) => {
-            return acct.address != this.wallet.owner
-          }
-        ).map((acct)=>{return acct.address})
-        const otherSignatories = sortAddresses(otherAddresses, 0)
-        await web3Enable('DoraFactory Multisig')
-        const sender = this.wallet.owner
-        const injector = await web3FromAddress(sender)
-        // a way to calculate the maxweight
-        const dumbExt = window.api.tx.multisig.approveAsMulti(
-          this.wallet.threshold,
-          otherSignatories,
-          trans.when,
-          hash,
-          0
-        )
-        const info =  await dumbExt.paymentInfo(sender)
-        const extrinsic = window.api.tx.multisig.approveAsMulti(
-          this.wallet.threshold,
-          otherSignatories,
-          trans.when,
-          hash,
-          info.partialFee
-        )
-        
-        extrinsic.signAndSend(sender, { signer: injector.signer }, ({ status, events, dispatchError }) => {
-          if (status.isInBlock) {
-            this.$message.info('Extrinsics in block with hash: ' + status.asInBlock)
-          }
-          if (status.isFinalized) {
-            if (dispatchError) {
-              if (dispatchError.isModule) {
-                // for module errors, we have the section indexed, lookup
-                const decoded = api.registry.findMetaError(dispatchError.asModule)
-                const { docs, name, section } = decoded
-                this.$message.error(`${section}.${name}: ${docs.join(' ')}`)
-              } else {
-                // Other, CannotLookup, BadOrigin, no extra info
-                this.$message.error(ispatchError.toString())
-              }
-            } else {
-              this.$message.success('Approval completed!')
-            }
-          }
-        })
-      }
-    },
-    mounted: async function() {
-      if (window.api) {
-        const myMultisigs = await window.api.query.multisig.multisigs.entries(this.wallet.address)
-        myMultisigs.forEach(([key, exposure]) => {
-          const keys = key.toHuman()
-          const trans = exposure.toJSON()
-          // as polkdot extension provides us substrate address, we have to convert first to compare
-          const owner = toSubstrateAddr(trans.depositor)
-          // group transactions by depositor
-          if(owner == this.wallet.owner) {
-            this.createdTrans[keys[1]] = trans
-          } else {
-            this.pendingTrans[keys[1]] = trans
-          }
-        })
-        const myCalls = await window.api.query.multisig.calls.entries()
-        myCalls.forEach(([key, exposure]) => {
-          const keys = key.toHuman()
-          const callInfo = exposure.toHuman()
-          this.calls[keys[0]] = callInfo
-        })
-      }
+  data: function() {
+    return {
+      pendingTrans: {},
+      createdTrans: {},
+      completedTrans: {},
+      calls: {},
+      tabIndex: 0,
+      tabs:["Pending", "Created", "Completed"]
     }
+  },
+  computed: {
+    ...mapGetters(
+        {
+          wallet: 'network/selectedWallet'
+        }
+    ),
+    transactions: function() {
+      if(this.tabIndex == 0) {
+        return this.pendingTrans
+      }
+      if(this.tabIndex == 1) {
+        return this.createdTrans
+      }
+      return this.completedTrans
+    }
+  },
+  mounted: async function() {
+    if (window.api) {
+      const myMultisigs = await window.api.query.multisig.multisigs.entries(this.wallet.address)
+      myMultisigs.forEach(([key, exposure]) => {
+        const keys = key.toHuman()
+        const trans = exposure.toJSON()
+        // as polkdot extension provides us substrate address, we have to convert first to compare
+        const owner = toSubstrateAddr(trans.depositor)
+        // group transactions by depositor
+        if(owner == this.wallet.owner) {
+          this.createdTrans[keys[1]] = trans
+        } else {
+          this.pendingTrans[keys[1]] = trans
+        }
+      })
+      const myCalls = await window.api.query.multisig.calls.entries()
+      myCalls.forEach(([key, exposure]) => {
+        const keys = key.toHuman()
+        const callInfo = exposure.toHuman()
+        this.calls[keys[0]] = callInfo
+      })
+    }
+  },
+  methods: {
+    callDetail(hash) {
+      const call = this.calls[hash]
+      if (!Array.isArray(call)) {
+        return null
+      }
+      return call[0]
+    },
+    openTrans() {
+      window.location.href='https://polkadot.js.org/apps'
+    },
+    async approveTrans(hash) {
+      const trans = this.transactions[hash]
+      const otherAddresses = this.wallet.accounts.filter(
+        (acct) => {
+          return acct.address != this.wallet.owner
+        }
+      ).map((acct)=>{return acct.address})
+      const otherSignatories = sortAddresses(otherAddresses, 0)
+      await web3Enable('DoraFactory Multisig')
+      const sender = this.wallet.owner
+      const injector = await web3FromAddress(sender)
+      // a way to calculate the maxweight
+      const dumbExt = window.api.tx.multisig.approveAsMulti(
+        this.wallet.threshold,
+        otherSignatories,
+        trans.when,
+        hash,
+        0
+      )
+      const info =  await dumbExt.paymentInfo(sender)
+      const extrinsic = window.api.tx.multisig.approveAsMulti(
+        this.wallet.threshold,
+        otherSignatories,
+        trans.when,
+        hash,
+        info.partialFee
+      )
+      
+      extrinsic.signAndSend(sender, { signer: injector.signer }, ({ status, events, dispatchError }) => {
+        if (status.isInBlock) {
+          this.$message.info('Extrinsics in block with hash: ' + status.asInBlock)
+        }
+        if (status.isFinalized) {
+          if (dispatchError) {
+            if (dispatchError.isModule) {
+              // for module errors, we have the section indexed, lookup
+              const decoded = api.registry.findMetaError(dispatchError.asModule)
+              const { docs, name, section } = decoded
+              this.$message.error(`${section}.${name}: ${docs.join(' ')}`)
+            } else {
+              // Other, CannotLookup, BadOrigin, no extra info
+              this.$message.error(ispatchError.toString())
+            }
+          } else {
+            this.$message.success('Approval completed!')
+          }
+        }
+      })
+    }
+  }
 }
 </script>
 <template>
-<div class="all-transactions">
-    <p class="title">TRANSACTIONS /</p>
+  <div class="all-transactions">
+    <p class="title">
+      TRANSACTIONS /
+    </p>
     <div class="options">
-        <ul>
-            <li v-bind:class="{'selected': tabIndex==i}" v-for="(tab, i) in tabs" :key="i" @click="this.tabIndex=i">{{ tab }}</li>
-        </ul>
-        <div @click="openTrans" class="btn new-transaction">
-            ↗ New transaction
-        </div>
+      <ul>
+        <li
+          v-for="(tab, i) in tabs"
+          :key="i"
+          :class="{'selected': tabIndex==i}"
+          @click="tabIndex=i"
+        >
+          {{ tab }}
+        </li>
+      </ul>
+      <div
+        class="btn new-transaction"
+        @click="openTrans"
+      >
+        ↗ New transaction
+      </div>
     </div>
     <div class="transaction-card-list">
-        <div v-for="(trans, hash) in transactions" :key="hash" class="transaction-card">
-            <div class="transaction-summary">
-              <p>
-                <span class="summary-label">CALL HASH:</span>
-                <span class="summary-value">{{ hash }}</span>
-              </p>
-              <p>
-                <span class="summary-label">TIME:</span>
-                <span class="summary-value">{{ trans.when }}</span>
-              </p>
-              <p>
-                <span class="summary-label">Depositor:</span>
-                <AddressInfo :address="trans.depositor" />
-              </p>
-              <p v-if="callDetail(hash)">
-                <span class="summary-label">PALLET/MODULEID:</span>
-                <span class="summary-value">{{ callDetail(hash).section }}/{{ callDetail(hash).method }}</span>
-              </p>
-              <p v-if="callDetail(hash)">
-                <span class="summary-label">PARAMETER:</span>
-                <span class="summary-value">{{ callDetail(hash).args }}}</span>
-              </p>
-            </div>
-            <div class="transaction-status">
-              <div class="status-bar">
-                  <span>Pending approval</span>
-                  <div v-if="tabIndex==0" class="approve-btn" @click="approveTrans(hash)">Approve</div>
-              </div>
-              <p class="status-summary">{{ trans.approvals.length }} out of {{ wallet.threshold }} owners</p>
-              <div class="progress-bar">
-                <div class="progress-created">
-                  <div class="circle-sign">+</div>
-                  <span>Created</span>
-                  <span class="connect-line"></span>
-                </div>
-                <div>
-                <div class="progress-confirmed">
-                  <div class="circle-sign"></div>
-                  <div class="">Confirmed</div>
-                  <span class="connect-line waiting"></span>
-                </div>
-                </div>
-                <div class="progress-executed inactive">
-                  <div class="circle-sign empty"></div>
-                  <div class="">Executed</div>
-                </div>
-              </div>
-              <div class="users-list">
-                <div class="user-info" v-for="(addr, i) in trans.approvals" :key="i">
-                  <img src="@/assets/avatar.svg" />
-                  <div class="user-profile">
-                    <p>Account</p>
-                    <p><AddressInfo :address="addr" /></p>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <div
+        v-for="(trans, hash) in transactions"
+        :key="hash"
+        class="transaction-card"
+      >
+        <div class="transaction-summary">
+          <p>
+            <span class="summary-label">CALL HASH:</span>
+            <span class="summary-value">{{ hash }}</span>
+          </p>
+          <p>
+            <span class="summary-label">TIME:</span>
+            <span class="summary-value">{{ trans.when }}</span>
+          </p>
+          <p>
+            <span class="summary-label">Depositor:</span>
+            <AddressInfo :address="trans.depositor" />
+          </p>
+          <p v-if="callDetail(hash)">
+            <span class="summary-label">PALLET/MODULEID:</span>
+            <span class="summary-value">{{ callDetail(hash).section }}/{{ callDetail(hash).method }}</span>
+          </p>
+          <p v-if="callDetail(hash)">
+            <span class="summary-label">PARAMETER:</span>
+            <span class="summary-value">{{ callDetail(hash).args }}}</span>
+          </p>
         </div>
+        <div class="transaction-status">
+          <div class="status-bar">
+            <span>Pending approval</span>
+            <div
+              v-if="tabIndex==0"
+              class="approve-btn"
+              @click="approveTrans(hash)"
+            >
+              Approve
+            </div>
+          </div>
+          <p class="status-summary">
+            {{ trans.approvals.length }} out of {{ wallet.threshold }} owners
+          </p>
+          <div class="progress-bar">
+            <div class="progress-created">
+              <div class="circle-sign">
+                +
+              </div>
+              <span>Created</span>
+              <span class="connect-line" />
+            </div>
+            <div>
+              <div class="progress-confirmed">
+                <div class="circle-sign" />
+                <div class="">
+                  Confirmed
+                </div>
+                <span class="connect-line waiting" />
+              </div>
+            </div>
+            <div class="progress-executed inactive">
+              <div class="circle-sign empty" />
+              <div class="">
+                Executed
+              </div>
+            </div>
+          </div>
+          <div class="users-list">
+            <div
+              v-for="(addr, i) in trans.approvals"
+              :key="i"
+              class="user-info"
+            >
+              <img src="@/assets/avatar.svg">
+              <div class="user-profile">
+                <p>Account</p>
+                <p><AddressInfo :address="addr" /></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 </template>
 <style lang="stylus" scoped>
 @import '@/assets/base.css'

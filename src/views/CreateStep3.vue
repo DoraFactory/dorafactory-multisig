@@ -5,6 +5,7 @@ import StepProgress from '@/components/StepProgress.vue'
 import { createKeyMulti, encodeAddress, sortAddresses} from '@polkadot/util-crypto'
 
 export default {
+    components:{StepProgress},
     data: function() {
       const params = this.$route.params
       return {
@@ -13,7 +14,6 @@ export default {
         threshold: params.threshold
       }
     },
-    components:{StepProgress},
     methods: {
         createWallet() {
             const SS58Prefix = 0
@@ -39,38 +39,53 @@ export default {
 }
 </script>
 <template>
-<div class="create-wallet-steps">
-    <StepProgress :current=3 />
-  <p>
+  <div class="create-wallet-steps">
+    <StepProgress :current="3" />
+    <p>
       Review wallet information
-  </p>
-  <div class="summary">
-    <div class="top">
-      <div class="left-part">
-        <p class="first-red">Name of new multisig</p>
-        <p>{{ walletName }}</p>
+    </p>
+    <div class="summary">
+      <div class="top">
+        <div class="left-part">
+          <p class="first-red">
+            Name of new multisig
+          </p>
+          <p>{{ walletName }}</p>
+        </div>
+        <div class="right-part">
+          <p class="first-red">
+            Any transaction requires the confirmation of:
+          </p>
+          <p> {{ threshold }} out of {{ accounts.length }} owners</p>
+        </div>
       </div>
-      <div class="right-part">
-        <p class="first-red">Any transaction requires the confirmation of:</p>
-        <p> {{ threshold}} out of {{ accounts.length }} owners</p>
+      <div class="owners">
+        <p class="first-red">
+          {{ accounts.length }} wallet owners
+        </p>
+        <div
+          v-for="(account, index) in accounts"
+          :key="index"
+          class="profile"
+        >
+          <img src="@/assets/avatar.svg">
+          <div class="name-info">
+            <p>{{ account.name }}</p>
+            <p>{{ account.address }}</p>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="owners">
-    <p class="first-red">{{accounts.length}} wallet owners</p>
-    <div class="profile" v-for="(account, index) in accounts" :key="index">
-      <img src="@/assets/avatar.svg" />
-      <div class="name-info">
-        <p>{{ account.name }}</p>
-        <p>{{ account.address }}</p>
+    <div class="btn-group">
+      <div
+        class="btn"
+        @click="createWallet"
+      >
+        Continue
       </div>
-    </div>
-  </div>
-  </div>
-  <div class="btn-group">
-      <div class="btn" @click="createWallet">Continue</div>
       <a @click="$router.go(-1)">back</a>
+    </div>
   </div>
-</div>
 </template>
 <style lang="stylus" scoped>
 @import '@/assets/base.css'

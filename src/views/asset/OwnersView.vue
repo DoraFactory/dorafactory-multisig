@@ -16,16 +16,24 @@ export default {
 }
 </script>
 <template>
-<div class="all-owners">
-    <p class="title">OWNERES / </p>
+  <div class="all-owners">
+    <p class="title">
+      OWNERES /
+    </p>
     <div class="owner-card-list">
-        <div class="owner-card" v-for="(account,index) in wallets[0].accounts" :key="index">
-            <img src="@/assets/avatar.svg" />
-            <p> {{ account.name }}</p>
-            <p class="address"> {{ account.address }}</p>
-        </div>
+      <div
+        v-for="(account,index) in wallets[0].accounts"
+        :key="index"
+        class="owner-card"
+      >
+        <img src="@/assets/avatar.svg">
+        <p> {{ account.name }}</p>
+        <p class="address">
+          {{ account.address }}
+        </p>
+      </div>
     </div>
-</div>
+  </div>
 </template>
 <style lang="stylus" scoped>
 @import '@/assets/base.css'

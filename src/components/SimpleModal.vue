@@ -1,27 +1,64 @@
 <script>
 export default {
-    emits: ["close"],
     props: {
         showModal: Boolean
-    }
+    },
+    emits: ["close"]
 }
 </script>
 
 <template>
-<transition name="fade" appear>
-    <div class="modal-overlay" 
-         v-if="showModal" 
-         @click="this.$emit('close')"></div>
+  <transition
+    name="fade"
+    appear
+  >
+    <div
+      v-if="showModal" 
+      class="modal-overlay" 
+      @click="$emit('close')"
+    />
   </transition>
-  <transition name="pop" appear>
-    <div class="modal" role="dialog" v-if="showModal">
-        <span class="close" @click="this.$emit('close')">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="22.3638" y="11.0503" width="16" height="2" rx="1" transform="rotate(135 22.3638 11.0503)" fill="#FF761C"/>
-              <rect x="11.0503" y="9.63599" width="16" height="2" rx="1" transform="rotate(45 11.0503 9.63599)" fill="#FF761C"/>
-            </svg>
-        </span>
-        <slot name="content"></slot>
+  <transition
+    name="pop"
+    appear
+  >
+    <div
+      v-if="showModal"
+      class="modal"
+      role="dialog"
+    >
+      <span
+        class="close"
+        @click="$emit('close')"
+      >
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 32 32"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect
+            x="22.3638"
+            y="11.0503"
+            width="16"
+            height="2"
+            rx="1"
+            transform="rotate(135 22.3638 11.0503)"
+            fill="#FF761C"
+          />
+          <rect
+            x="11.0503"
+            y="9.63599"
+            width="16"
+            height="2"
+            rx="1"
+            transform="rotate(45 11.0503 9.63599)"
+            fill="#FF761C"
+          />
+        </svg>
+      </span>
+      <slot name="content" />
     </div>
   </transition>
 </template>

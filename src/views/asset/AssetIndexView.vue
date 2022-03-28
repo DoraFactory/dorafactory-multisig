@@ -41,12 +41,15 @@ export default {
       <span class="selected-network">
         {{ network ? network.display: "" }}
       </span>
-      <img id="network-logo" src="@/assets/logo.svg" />
+      <img
+        id="network-logo"
+        src="@/assets/logo.svg"
+      >
     </div>
   </div>
   <div class="content">
-      <SideMenu />
-      <RouterView />
+    <SideMenu />
+    <RouterView />
   </div>
 </template>
 <style lang="stylus" scoped>

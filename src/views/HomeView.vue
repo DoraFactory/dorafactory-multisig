@@ -3,6 +3,7 @@ import CreateWallet from '@/components/CreateWallet.vue'
 import LoginWallet from '@/components/LoginWallet.vue'
 
 export default {
+  components: {CreateWallet, LoginWallet },
   data() {
     return {
       networks: [
@@ -13,7 +14,6 @@ export default {
       selected: ''
     }
   },
-  components: {CreateWallet, LoginWallet },
   watch: {
     selected: function(v) {
       this.$store.dispatch('network/switchNetwork', v)
@@ -23,21 +23,29 @@ export default {
 </script>
 
 <template>
-<div class="content">
-  <div class="header">
-    <select v-model="selected">
-      <option value="">Select A Chain</option>
-      <option v-for="(network, i) in networks" :key="i" :value="network">{{ network.name }}</option>
-    </select>
-    <img src="@/assets/logo.svg" />
+  <div class="content">
+    <div class="header">
+      <select v-model="selected">
+        <option value="">
+          Select A Chain
+        </option>
+        <option
+          v-for="(network, i) in networks"
+          :key="i"
+          :value="network"
+        >
+          {{ network.name }}
+        </option>
+      </select>
+      <img src="@/assets/logo.svg">
+    </div>
+    <h2> Welcome to Substrate Multisig </h2>
+    <main>
+      <CreateWallet />
+      <div class="vertical-space-divider" />
+      <LoginWallet />
+    </main>
   </div>
-  <h2> Welcome to Substrate Multisig </h2>
-  <main>
-    <CreateWallet />
-    <div class="vertical-space-divider"></div>
-    <LoginWallet />
-  </main>
-</div>
 </template>
 <style lang="stylus">
 @import '@/assets/base.css'

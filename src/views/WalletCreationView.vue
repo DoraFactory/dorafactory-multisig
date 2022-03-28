@@ -5,12 +5,12 @@ import NetworkInfo from '../components/NetworkInfo.vue'
 </script>
 
 <template>
-<div class="content">
-  <NetworkInfo />
-  <div class="steps">
-    <RouterView />
+  <div class="content">
+    <NetworkInfo />
+    <div class="steps">
+      <RouterView />
+    </div>
   </div>
-</div>
 </template>
 <style lang="stylus">
 @import '@/assets/base.css'

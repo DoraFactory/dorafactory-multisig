@@ -29,13 +29,16 @@ export default {
 }
 </script>
 <template>
-<div class="header">
+  <div class="header">
     <span class="selected-network">
-        {{ network ? network.display: "" }}
+      {{ network ? network.display: "" }}
     </span>
-    <img id="network-logo" src="@/assets/logo.svg" />
-    </div>
-    <h2> Welcome to Substrate Multisig </h2>
+    <img
+      id="network-logo"
+      src="@/assets/logo.svg"
+    >
+  </div>
+  <h2> Welcome to Substrate Multisig </h2>
 </template>
 <style lang="stylus">
 @import '@/assets/base.css'
