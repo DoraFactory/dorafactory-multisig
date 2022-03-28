@@ -33,7 +33,14 @@ npm run build
 npm run lint
 ```
 
-## Future work
+## Test with Docker
+1. Build the image,  
+```docker build -t dorafactory-multsig:evaluate . ```  
+2. Run a container,  
+```docker run -p 3000:3000 dorafactory-multsig:evaluate ```
+3. Run the tests following [the guide](./docs/test-guide.md)
+
+## Known issues
 1. Vue build does not support some of our polkadot packages, it'll always fail. This is a known issue to be fixed.
 https://github.com/vitejs/vite/issues/7364 Currently, our project can only be view under development mode.
 2. You may have found that our account icon/avatar won't change, as the `vue-identicon` dose not support Vue3 yet. 

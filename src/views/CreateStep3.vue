@@ -23,13 +23,15 @@ export default {
             const Ss58Address = encodeAddress(multiAddress, SS58Prefix)
             let wallets = localStorage.getItem('multisig-wallets') ?
                         JSON.parse(localStorage.getItem('multisig-wallets')) : []
-            wallets.push({
+            const wallet = {
               'name': this.walletName,
               'accounts': this.accounts,
               'address': Ss58Address,
               'threshold': this.threshold,
               'owner': this.$store.state.network.account.address
-            })
+            }
+            wallets.push(wallet)
+            this.$store.commit('network/setWallet', wallet)
             localStorage.setItem('multisig-wallets', JSON.stringify(wallets))
             this.$router.push('/asset')
         }

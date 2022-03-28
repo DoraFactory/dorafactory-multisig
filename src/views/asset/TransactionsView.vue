@@ -42,6 +42,9 @@ export default {
         }
         return call[0]
       },
+      openTrans() {
+        window.location.href='https://polkadot.js.org/apps'
+      },
       async approveTrans(hash) {
         const trans = this.transactions[hash]
         const otherAddresses = this.wallet.accounts.filter(
@@ -53,26 +56,42 @@ export default {
         await web3Enable('DoraFactory Multisig')
         const sender = this.wallet.owner
         const injector = await web3FromAddress(sender)
+        // a way to calculate the maxweight
+        const dumbExt = window.api.tx.multisig.approveAsMulti(
+          this.wallet.threshold,
+          otherSignatories,
+          trans.when,
+          hash,
+          0
+        )
+        const info =  await dumbExt.paymentInfo(sender)
         const extrinsic = window.api.tx.multisig.approveAsMulti(
           this.wallet.threshold,
           otherSignatories,
           trans.when,
           hash,
-          40918010
+          info.partialFee
         )
-        // const info =  await extrinsic.paymentInfo(sender)
-        // console.log(`class=${info}`)
-        extrinsic.signAndSend(sender, { signer: injector.signer }, 
-        ({events = [],status}) => { 
-          console.log(`Current status is ${status}`);
-
-    if (status.isFinalized) {
-      console.log(`Transaction included at blockHash ${status.asFinalized}`)
-
-      // Loop through Vec<EventRecord> to display all events
-      events.forEach(({ phase, event: { data, method, section } }) => {
-        console.log(`\t' ${phase}: ${section}.${method}:: ${data}`)
-      })} 
+        
+        extrinsic.signAndSend(sender, { signer: injector.signer }, ({ status, events, dispatchError }) => {
+          if (status.isInBlock) {
+            this.$message.info('Extrinsics in block with hash: ' + status.asInBlock)
+          }
+          if (status.isFinalized) {
+            if (dispatchError) {
+              if (dispatchError.isModule) {
+                // for module errors, we have the section indexed, lookup
+                const decoded = api.registry.findMetaError(dispatchError.asModule)
+                const { docs, name, section } = decoded
+                this.$message.error(`${section}.${name}: ${docs.join(' ')}`)
+              } else {
+                // Other, CannotLookup, BadOrigin, no extra info
+                this.$message.error(ispatchError.toString())
+              }
+            } else {
+              this.$message.success('Approval completed!')
+            }
+          }
         })
       }
     },
@@ -108,7 +127,7 @@ export default {
         <ul>
             <li v-bind:class="{'selected': tabIndex==i}" v-for="(tab, i) in tabs" :key="i" @click="this.tabIndex=i">{{ tab }}</li>
         </ul>
-        <div class="btn new-transaction">
+        <div @click="openTrans" class="btn new-transaction">
             ↗ New transaction
         </div>
     </div>
@@ -141,7 +160,7 @@ export default {
                   <span>Pending approval</span>
                   <div v-if="tabIndex==0" class="approve-btn" @click="approveTrans(hash)">Approve</div>
               </div>
-              <p class="status-summary">1 out of 2 owners</p>
+              <p class="status-summary">{{ trans.approvals.length }} out of {{ wallet.threshold }} owners</p>
               <div class="progress-bar">
                 <div class="progress-created">
                   <div class="circle-sign">+</div>

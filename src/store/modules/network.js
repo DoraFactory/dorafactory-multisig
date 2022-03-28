@@ -36,6 +36,9 @@ const actions = {
       await window.api.disconnect()
     }
     window.api = null
+    if (network == null) {
+      return
+    }
     try {
         const wsProvider = new WsProvider(network.address)
         const api = new ApiPromise({ provider: wsProvider })
@@ -46,7 +49,6 @@ const actions = {
         commit('setConnectStatus', 'successful')
         commit('setSelected', network)
     } catch (e) {
-      console.error(e)
       commit('setConnectStatus', 'failed')
       window.api = null
     }

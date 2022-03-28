@@ -7,7 +7,6 @@ export default {
     return {
       networks: [
         {"address": "ws://127.0.0.1:9944", "name":"LocalChain", "logo": "logo.svg"},
-        {"address":"wss://rpc.tophacker.com", "name":"DoraFactory", "logo": "networks/dorafactory.png"},
         {"address":"wss://rpc.polkadot.io", "name":"Polkadot", "logo": "networks/polkadot.png"},
         {"address":"wss://kusama-rpc.polkadot.io", "name":"Kusama", "logo": "networks/kusama.png"}
       ],
