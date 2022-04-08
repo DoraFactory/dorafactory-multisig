@@ -9,6 +9,7 @@ import {
 } from '@polkadot/extension-dapp'
 import SelectAccount from '../components/SelectAccount.vue'
 import SimpleModal from '@/components/SimpleModal.vue'
+import { u8aToHex } from '@polkadot/util'
 
 
 export default {

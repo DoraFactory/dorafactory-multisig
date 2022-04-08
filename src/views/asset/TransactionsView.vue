@@ -1,15 +1,19 @@
 <script>
 import { mapGetters } from 'vuex'
+import SimpleModal from '@/components/SimpleModal.vue'
 import AddressInfo from '@/components/AddressInfo.vue'
+import NewTransaction from '@/components/NewTransaction.vue'
 import { sortAddresses } from '@polkadot/util-crypto'
 import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp'
 import { toSubstrateAddr } from '@/utils/substrate.js'
 
 
+
 export default {
-  components: {AddressInfo},
+  components: {AddressInfo, SimpleModal, NewTransaction},
   data: function() {
     return {
+      newTrans: false,
       pendingTrans: {},
       createdTrans: {},
       completedTrans: {},
@@ -65,8 +69,45 @@ export default {
       }
       return call[0]
     },
-    openTrans() {
-      window.location.href='https://polkadot.js.org/apps'
+    async submitTrans(callData) {
+      const otherAddresses = this.wallet.accounts.filter(
+        (acct) => {
+          return acct.address != this.wallet.owner
+        }
+      ).map((acct)=>{return acct.address})
+      const otherSignatories = sortAddresses(otherAddresses, 0)
+      await web3Enable('DoraFactory Multisig')
+      const sender = this.wallet.owner
+      const injector = await web3FromAddress(sender)
+      const extrinsic = window.api.tx.multisig.asMulti(
+        this.wallet.threshold,
+        otherSignatories,
+        null,
+        callData,
+        true,
+        0
+      )
+      extrinsic.signAndSend(sender, { signer: injector.signer }, ({ status, events, dispatchError }) => {
+        this.newTrans = false
+        if (status.isInBlock) {
+          this.$message.info('Extrinsics in block with hash: ' + status.asInBlock)
+        }
+        if (status.isFinalized) {
+          if (dispatchError) {
+            if (dispatchError.isModule) {
+              // for module errors, we have the section indexed, lookup
+              const decoded = api.registry.findMetaError(dispatchError.asModule)
+              const { docs, name, section } = decoded
+              this.$message.error(`${section}.${name}: ${docs.join(' ')}`)
+            } else {
+              // Other, CannotLookup, BadOrigin, no extra info
+              this.$message.error(ispatchError.toString())
+            }
+          } else {
+            this.$message.success('Submit completed!')
+          }
+        }
+      })
     },
     async approveTrans(hash) {
       const trans = this.transactions[hash]
@@ -138,11 +179,19 @@ export default {
       </ul>
       <div
         class="btn new-transaction"
-        @click="openTrans"
+        @click="newTrans=true"
       >
         ↗ New transaction
       </div>
     </div>
+    <SimpleModal
+      :show-modal="newTrans"
+      @close="newTrans=false"
+    >
+      <template #content>
+        <NewTransaction :address="this.wallet.address" @submit="submitTrans"/>
+      </template>
+    </SimpleModal>
     <div class="transaction-card-list">
       <div
         v-for="(trans, hash) in transactions"
