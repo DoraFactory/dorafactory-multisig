@@ -33,6 +33,12 @@ npm run build
 npm run lint
 ```
 
+### Unit test
+Unit test case are built with [vitest](https://vitest.dev/guide/) and [Vue Test Utils(VTU)](https://test-utils.vuejs.org/), to run all unit tests just type following command
+```sh
+npm run test
+```
+
 ## Integration test with Docker
 1. Build the image,  
 ```docker build -t dorafactory-multsig:evaluate . ```  
