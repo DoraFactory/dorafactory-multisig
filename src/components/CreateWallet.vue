@@ -3,7 +3,7 @@ import { RouterLink } from 'vue-router'
 import RightArrow from './icons/IconRightArrow.vue'
 
 export default {
-    components:{RightArrow}
+    components:{RightArrow, RouterLink}
 }
 </script>
 <template>

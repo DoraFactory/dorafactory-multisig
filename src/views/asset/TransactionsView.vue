@@ -189,7 +189,10 @@ export default {
       @close="newTrans=false"
     >
       <template #content>
-        <NewTransaction :address="this.wallet.address" @submit="submitTrans"/>
+        <NewTransaction
+          :address="wallet.address"
+          @submit="submitTrans"
+        />
       </template>
     </SimpleModal>
     <div class="transaction-card-list">

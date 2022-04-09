@@ -21,9 +21,9 @@
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.0",
-    "@testing-library/vue": "^6.4.2",
     "@vitejs/plugin-vue": "^2.1.0",
     "@vue/eslint-config-prettier": "^7.0.0",
+    "@vue/test-utils": "^2.0.0-rc.19",
     "eslint": "^8.12.0",
     "eslint-plugin-vue": "^8.5.0",
     "happy-dom": "^2.50.0",

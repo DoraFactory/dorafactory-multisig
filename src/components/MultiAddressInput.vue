@@ -1,22 +1,14 @@
 <script>
 
 export default {
-    props: {
-        value: {
-            type: String,
-            default: ''
-        },
-        addressType: {
-            type: String,
-            default: 'Id',
-        }
-    },
+    emits: ["done"],
     data: function() {
         return {
+            value: '',
+            addressType: 'Id',
             types: ['Id', 'Index', 'Raw', 'Address32', 'Address20']
         }
     },
-    emits: ["done"],
     methods: {
         onBlur() {
             const address = {
@@ -29,10 +21,21 @@ export default {
 </script>
 
 <template>
-  <el-select v-model="addressType" class="address-type">
-      <el-option v-for="(name, i) in types" :key="i" :value="name"/>
+  <el-select
+    v-model="addressType"
+    class="address-type"
+  >
+    <el-option
+      v-for="(name, i) in types"
+      :key="i"
+      :value="name"
+    />
   </el-select>
-  <input v-on:blur="onBlur" :type="this.addressType == 'Index' ? 'number' : 'text'" v-model="value" />
+  <input
+    v-model="value"
+    :type="addressType == 'Index' ? 'number' : 'text'"
+    @blur="onBlur"
+  >
 </template>
 
 <style lang="stylus" scoped>

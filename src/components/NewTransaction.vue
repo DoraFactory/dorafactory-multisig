@@ -6,6 +6,7 @@ import MultiAddressInput from './MultiAddressInput.vue'
 import { fetchBalance } from '@/utils/substrate.js'
 
 export default {
+    components: {ArrowDown, MultiAddressInput},
     props: {
         address: {
             type: String,
@@ -13,7 +14,6 @@ export default {
         }
     },
     emits: ["submit"],
-    components: {ArrowDown, MultiAddressInput},
     data: function (){
         return {
             modules: [],
@@ -98,70 +98,115 @@ export default {
 <template>
   <h3> New transaction</h3>
   <div class="form-groups">
-      <div class="wallet-header">
-        <div class="description">Accounts</div>
-        <div class="balance"> Balance: {{ balance }}</div>
+    <div class="wallet-header">
+      <div class="description">
+        Accounts
       </div>
-      <div class="wallet-info">
-        {{ address }}
+      <div class="balance">
+        Balance: {{ balance }}
       </div>
-      <div class="form-control">
-          <div class="description">Submit</div>
-          <div class="controls">
-            <el-dropdown trigger="click" max-height="400px" class="module-control">
-                <span class="el-dropdown-link">
-                {{ selectedModule }}
-                </span>
-                <el-icon class="el-icon--right">
-                    <ArrowDown />
-                </el-icon>
-                <template #dropdown>
-                <el-dropdown-menu>
-                    <el-dropdown-item @click="this.selectedModule=name" class="method-group" v-for="(name, i) in modules" :key="i">
-                        <div>{{ name }}</div>
-                    </el-dropdown-item>
-                </el-dropdown-menu>
-                </template>
-            </el-dropdown>
-            <el-dropdown trigger="click" max-height="400px" class="method-control">
-                <div class="el-dropdown-link">
-                <span>{{ selectedMethod.name }}</span>
-                <span>{{ selectedMethod.doc }}</span>
-                </div>
-                <el-icon class="el-icon--right">
-                    <ArrowDown />
-                </el-icon>
-                <template #dropdown>
-                <el-dropdown-menu>
-                    <el-dropdown-item @click="this.selectedMethod=item" class="method-group" v-for="(item, i) in methods" :key="i">
-                        <div>{{ item.name }}</div>
-                        <div>{{ item.doc }}</div>
-                    </el-dropdown-item>
-                </el-dropdown-menu>
-                </template>
-            </el-dropdown>
+    </div>
+    <div class="wallet-info">
+      {{ address }}
+    </div>
+    <div class="form-control">
+      <div class="description">
+        Submit
+      </div>
+      <div class="controls">
+        <el-dropdown
+          trigger="click"
+          max-height="400px"
+          class="module-control"
+        >
+          <span class="el-dropdown-link">
+            {{ selectedModule }}
+          </span>
+          <el-icon class="el-icon--right">
+            <ArrowDown />
+          </el-icon>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                v-for="(name, i) in modules"
+                :key="i"
+                class="method-group"
+                @click="selectedModule=name"
+              >
+                <div>{{ name }}</div>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <el-dropdown
+          trigger="click"
+          max-height="400px"
+          class="method-control"
+        >
+          <div class="el-dropdown-link">
+            <span>{{ selectedMethod.name }}</span>
+            <span>{{ selectedMethod.doc }}</span>
           </div>
+          <el-icon class="el-icon--right">
+            <ArrowDown />
+          </el-icon>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                v-for="(item, i) in methods"
+                :key="i"
+                class="method-group"
+                @click="selectedMethod=item"
+              >
+                <div>{{ item.name }}</div>
+                <div>{{ item.doc }}</div>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </div>
-      <div class="form-control" v-for="(arg,i) in selectedMethod.args" :key="i">
-        <div class="arg-name">{{arg.name}}: {{ arg.type}} ({{ arg.typeName }})</div>
-        <MultiAddressInput v-if="arg.type == 'MultiAddress'" @done="multiAddressUpdateed(i, $event)"/>
-        <input v-else class="arg-value" :type="inputType(arg.type)" v-model="values[i]"/>
-        
+    </div>
+    <div
+      v-for="(arg,i) in selectedMethod.args"
+      :key="i"
+      class="form-control"
+    >
+      <div class="arg-name">
+        {{ arg.name }}: {{ arg.type }} ({{ arg.typeName }})
       </div>
-      <div class="form-control">
-        <div class="description">encoded call data</div>
-        <div class="encoded">{{ encodeData }}</div>
-      </div>
-      <div class="form-control">
-        <div class="description">encoded call hash</div>
-        <div class="encoded">{{ encodeHash }}</div>
-      </div>
-      <div
-        class="btn"
-        @click="submit"
+      <MultiAddressInput
+        v-if="arg.type == 'MultiAddress'"
+        @done="multiAddressUpdateed(i, $event)"
+      />
+      <input
+        v-else
+        v-model="values[i]"
+        class="arg-value"
+        :type="inputType(arg.type)"
       >
-        Submit transaction
+    </div>
+    <div class="form-control">
+      <div class="description">
+        encoded call data
       </div>
+      <div class="encoded">
+        {{ encodeData }}
+      </div>
+    </div>
+    <div class="form-control">
+      <div class="description">
+        encoded call hash
+      </div>
+      <div class="encoded">
+        {{ encodeHash }}
+      </div>
+    </div>
+    <div
+      class="btn"
+      @click="submit"
+    >
+      Submit transaction
+    </div>
   </div>
 </template>
 <style lang="stylus">

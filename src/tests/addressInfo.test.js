@@ -1,18 +1,21 @@
-import {render, fireEvent} from '@testing-library/vue'
+import { mount } from '@vue/test-utils'
 import AddressInfo from '@/components/AddressInfo.vue'
+import { vi } from 'vitest'
 
 
-test('Address abbreviation worked', async () => {
-  // The render method returns a collection of utilities to query your component.
-  const {getByRole, getByText} = render(AddressInfo, {
-      props: {
-          address: '15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5'
-      }
+test('Address abbreviation should work', async () => {
+  // mock the copy method inside
+  const copyMock = vi.fn()
+  const wrapper = mount(AddressInfo, {
+    propsData: {
+      address: '15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5'
+    }
   })
+  wrapper.vm.copy = copyMock
+  // check abbreviation
+  expect(wrapper.find('label').text()).toBe('15oF4...r6Sp5')
 
-  // assert we get filtered address display
-  getByText('15oF4...r6Sp5')
-
-  // assert to get the img element to run copy test
-  getByRole('img')
+  // test copy item
+  await wrapper.find('img').trigger('click')
+  expect(copyMock.mock.calls.length).toBe(1)
 })

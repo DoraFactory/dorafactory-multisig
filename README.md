@@ -33,7 +33,7 @@ npm run build
 npm run lint
 ```
 
-## Test with Docker
+## Integration test with Docker
 1. Build the image,  
 ```docker build -t dorafactory-multsig:evaluate . ```  
 2. Run a container,  
