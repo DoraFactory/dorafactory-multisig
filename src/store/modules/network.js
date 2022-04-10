@@ -69,6 +69,9 @@ const mutations = {
   },
 
   setWallet(state, wallet) {
+    if (wallet && wallet.address) {
+      localStorage.setItem("selected-wallet-address", wallet.address)
+    }
     state.wallet = wallet
   }
 }

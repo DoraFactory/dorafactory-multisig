@@ -12,7 +12,8 @@ export default {
             accounts.push(
                 {
                     'name': selectedAcct.meta.name,
-                    'address': selectedAcct.address
+                    'address': selectedAcct.address,
+                    'status': ''
                 }
             )
         }
@@ -31,8 +32,24 @@ export default {
                 {
                     'name': '',
                     'address':'',
+                    'status': ''
                 }
             )
+        },
+        removeAccount(i) {
+          this.accounts.splice(i, 1)
+        },
+        validateAddress(i, address) {
+          if(!address) {
+            return
+          }
+          const duplicated = this.accounts.filter((e)=>e.address == address)
+          if (duplicated.length > 1) {
+            this.$message.error('Do not fill in the same address')
+            this.accounts[i].status = 'invalid'
+          } else {
+            this.accounts[i].status = 'valid'
+          }
         },
         next() {
             if (!this.walletName) {
@@ -43,6 +60,10 @@ export default {
                     showClose: true
                 })
                 return
+            }
+            if (this.threshold > this.accounts.length) {
+              this.$message.error('Threshold can not exceed number of accounts')
+              return
             }
             this.$router.push({
                 name: "step3", 
@@ -82,18 +103,23 @@ export default {
           <div
             v-for="(account, index) in accounts"
             :key="index"
-            class="address-info"
+            class="address-inputs"
           >
             <input
               v-model="account.name"
               type="text"
               :disabled="index==0"
             >
+            <div class="editable">
+              <div class="validate-status" :class="account.status"/>
             <input
               v-model="account.address"
               type="text"
               :disabled="index==0"
+              v-on:blur="validateAddress(index, account.address)"
             >
+            </div>
+            <img @click="removeAccount(index)" class="deletion" src="@/assets/delete.svg" v-bind:class='{"visible": index > 0}'>
           </div>
           <div
             class="add-link"
@@ -121,7 +147,7 @@ export default {
       >
         Continue
       </div>
-      <a @click="cancel">cancel</a>
+      <a @click="$router.go(-1)">cancel</a>
     </div>
   </div>
 </template>
@@ -158,6 +184,7 @@ export default {
     padding-left: 48px
     a
       margin-left: 48px
+      cursor: pointer
       color: var(--theme-orange)
       font-weight: 400
 input
@@ -181,12 +208,37 @@ input
     box-sizing: border-box
     div:first-child
       margin-right: 150px
-.address-info
+.address-inputs
   margin-top: 12px
   display inline-flex
-  width: 100%
+  width: calc(100% + 30px)
   input:first-child
     margin-right: 16px
+  .deletion
+    margin-left: 10px
+    cursor: pointer
+    visibility: hidden
+    &.visible
+      visibility: visible
+  .editable
+    position relative
+    width: 100%
+    .validate-status
+      width: 20px
+      height: 20px
+      visibility: hidden
+      position absolute
+      background-repeat: no-repeat
+      background-position: center
+      background-size: cover
+      margin-top: 10px
+      right: 10px
+      &.valid
+        visibility: visible
+        background-image: url('@/assets/valid.svg')
+      &.invalid
+        visibility: visible
+        background-image: url('@/assets/invalid.svg')
   input:last-child
     width: 100%
 .add-link

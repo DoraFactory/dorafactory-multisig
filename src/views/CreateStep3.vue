@@ -30,6 +30,8 @@ export default {
               'threshold': this.threshold,
               'owner': this.$store.state.network.account.address
             }
+            // overwrite existing wallets
+            wallets = wallets.filter((w)=>w.address!=wallet.address)
             wallets.push(wallet)
             this.$store.commit('network/setWallet', wallet)
             localStorage.setItem('multisig-wallets', JSON.stringify(wallets))
@@ -103,6 +105,7 @@ export default {
     margin-top: 48px
     padding-left: 48px
     a
+      cursor pointer
       margin-left: 48px
       color: var(--theme-orange)
       font-weight: 400

@@ -90,6 +90,12 @@ export default {
         },
         submit() {
           this.$emit('submit', this.encodeData)
+        },
+        copy(text) {
+          navigator.clipboard.writeText(text).then(
+                ()=>{this.$message.success('Content copied!')},
+                ()=>{this.$message.error('Copy failed!')}
+            )
         }
     }
 }
@@ -191,6 +197,7 @@ export default {
       </div>
       <div class="encoded">
         {{ encodeData }}
+        <img @click="copy(encodeData)" src="@/assets/copy-circle.svg" />
       </div>
     </div>
     <div class="form-control">
@@ -199,6 +206,7 @@ export default {
       </div>
       <div class="encoded">
         {{ encodeHash }}
+        <img @click="copy(encodeHash)" src="@/assets/copy-circle.svg" />
       </div>
     </div>
     <div
@@ -292,10 +300,15 @@ h3
 .el-dropdown-menu
   overflow-y: scroll
 .encoded
-  color: black
+  color: rgba(14, 14, 17, 0.3)
   font-size: 16px
   text-align: left
   line-height: 24px
+  width: 900px
+  display: flex
+  justify-content: space-between
+  img
+    cursor pointer
 .arg-name
   text-align: left
   font-size: 16px

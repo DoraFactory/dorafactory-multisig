@@ -1,12 +1,15 @@
 <script >
+import {
+  ArrowDown
+} from '@element-plus/icons-vue'
 import { RouterLink } from 'vue-router'
 import { mapGetters } from 'vuex'
 import AddressInfo from './AddressInfo.vue'
 
 export default {
-    components: { AddressInfo },
+    components: { AddressInfo, ArrowDown },
     data: function () {
-        const storedWallets = localStorage.getItem("multisig-wallets");
+        const storedWallets = localStorage.getItem("multisig-wallets")
         if (!storedWallets) {
             return {
                 wallets: []
@@ -35,6 +38,9 @@ export default {
         localStorage.clear()
         this.$store.dispatch('network/switchNetwork', null)
         this.$router.push('/')
+      },
+      walletChanged(wallet) {
+        this.$store.commit('network/setWallet', wallet)
       }
     }
 }
@@ -42,16 +48,41 @@ export default {
 <template>
   <div class="side-menu">
     <div class="wallet-info">
-      <div class="profile">
+      <el-dropdown
+          trigger="click"
+          max-height="400px"
+          class="profile-selected"
+        >
+          <div class="profile">
         <img src="@/assets/avatar.svg">
         <div
           v-if="wallet"
           class="name-info"
         >
-          <p>{{ wallet.name }}</p>
+          <p>{{ wallet.name }} <ArrowDown /></p>
           <p><AddressInfo :address="wallet.address" /></p>
         </div>
       </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                v-for="(item, i) in wallets"
+                :key="i"
+                @click="walletChanged(item)"
+              >
+                <div class="profile-item">
+        <img src="@/assets/avatar.svg">
+        <div
+          class="name-info"
+        >
+          <p>{{ item.name }}</p>
+          <p><AddressInfo :address="item.address" /></p>
+        </div>
+      </div>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       <div
         class="new-wallet"
         @click="$router.push('/create-wallet')"
@@ -273,6 +304,17 @@ export default {
 </template>
 <style lang="stylus" scoped>
 @import '@/assets/base.css'
+.profile-selected
+  height: 48px
+  border: none
+  svg
+    width: 16px
+.profile-item
+  width: 160px
+  display: flex
+  p
+    margin-block: 0
+    margin-left: 10px
 .side-menu
   background: white
   min-width: 280px
@@ -288,6 +330,7 @@ export default {
   .profile
     display: flex
     justify-content: flex-start
+    cursor: pointer
     .name-info
       max-width: 130px      
     img
@@ -296,11 +339,11 @@ export default {
       margin-right: 10px
     p
       margin-block: 0
+      font-size: 16px
+      block-size: 22px
       &:last-child
         color: rgba(14, 14, 17, 0.3)
-        overflow hidden
         white-space: nowrap
-        text-overflow: ellipsis
 .menu-link
   display: flex
   font-weight: 500

@@ -9,7 +9,6 @@ import {
 } from '@polkadot/extension-dapp'
 import SelectAccount from '../components/SelectAccount.vue'
 import SimpleModal from '@/components/SimpleModal.vue'
-import { u8aToHex } from '@polkadot/util'
 
 
 export default {
@@ -136,6 +135,7 @@ export default {
     margin-top: 48px
     padding-left: 48px
     a
+      cursor pointer
       margin-left: 48px
       color: var(--theme-orange)
       font-weight: 400

@@ -17,7 +17,11 @@ export default {
             this.$router.push('/')
             return
             }
-            this.$store.commit('network/setWallet', JSON.parse(storedWallets)[0])
+            // fetch local selected wallet
+            const selectedWalletAddr = localStorage.getItem("selected-wallet-address")
+            const wallets = JSON.parse(storedWallets)
+            const selectedWallet = wallets.filter((w)=>w.address==selectedWalletAddr)
+            this.$store.commit('network/setWallet', selectedWallet.length > 0 ? selectedWallet[0] : wallets[0])
             this.$router.push('/asset')
         }
     }
