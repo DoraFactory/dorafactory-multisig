@@ -125,7 +125,7 @@ export default {
             <img
               class="deletion"
               src="@/assets/delete.svg"
-              :class="{&quot;visible&quot;: index > 0}"
+              :class="{visible: index > 0}"
               @click="removeAccount(index)"
             >
           </div>
