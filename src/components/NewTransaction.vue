@@ -197,7 +197,10 @@ export default {
       </div>
       <div class="encoded">
         {{ encodeData }}
-        <img @click="copy(encodeData)" src="@/assets/copy-circle.svg" />
+        <img
+          src="@/assets/copy-circle.svg"
+          @click="copy(encodeData)"
+        >
       </div>
     </div>
     <div class="form-control">
@@ -206,7 +209,10 @@ export default {
       </div>
       <div class="encoded">
         {{ encodeHash }}
-        <img @click="copy(encodeHash)" src="@/assets/copy-circle.svg" />
+        <img
+          src="@/assets/copy-circle.svg"
+          @click="copy(encodeHash)"
+        >
       </div>
     </div>
     <div

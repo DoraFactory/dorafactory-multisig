@@ -111,15 +111,23 @@ export default {
               :disabled="index==0"
             >
             <div class="editable">
-              <div class="validate-status" :class="account.status"/>
-            <input
-              v-model="account.address"
-              type="text"
-              :disabled="index==0"
-              v-on:blur="validateAddress(index, account.address)"
-            >
+              <div
+                class="validate-status"
+                :class="account.status"
+              />
+              <input
+                v-model="account.address"
+                type="text"
+                :disabled="index==0"
+                @blur="validateAddress(index, account.address)"
+              >
             </div>
-            <img @click="removeAccount(index)" class="deletion" src="@/assets/delete.svg" v-bind:class='{"visible": index > 0}'>
+            <img
+              class="deletion"
+              src="@/assets/delete.svg"
+              :class="{&quot;visible&quot;: index > 0}"
+              @click="removeAccount(index)"
+            >
           </div>
           <div
             class="add-link"

@@ -49,40 +49,40 @@ export default {
   <div class="side-menu">
     <div class="wallet-info">
       <el-dropdown
-          trigger="click"
-          max-height="400px"
-          class="profile-selected"
-        >
-          <div class="profile">
-        <img src="@/assets/avatar.svg">
-        <div
-          v-if="wallet"
-          class="name-info"
-        >
-          <p>{{ wallet.name }} <ArrowDown /></p>
-          <p><AddressInfo :address="wallet.address" /></p>
+        trigger="click"
+        max-height="400px"
+        class="profile-selected"
+      >
+        <div class="profile">
+          <img src="@/assets/avatar.svg">
+          <div
+            v-if="wallet"
+            class="name-info"
+          >
+            <p>{{ wallet.name }} <ArrowDown /></p>
+            <p><AddressInfo :address="wallet.address" /></p>
+          </div>
         </div>
-      </div>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item
-                v-for="(item, i) in wallets"
-                :key="i"
-                @click="walletChanged(item)"
-              >
-                <div class="profile-item">
-        <img src="@/assets/avatar.svg">
-        <div
-          class="name-info"
-        >
-          <p>{{ item.name }}</p>
-          <p><AddressInfo :address="item.address" /></p>
-        </div>
-      </div>
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item
+              v-for="(item, i) in wallets"
+              :key="i"
+              @click="walletChanged(item)"
+            >
+              <div class="profile-item">
+                <img src="@/assets/avatar.svg">
+                <div
+                  class="name-info"
+                >
+                  <p>{{ item.name }}</p>
+                  <p><AddressInfo :address="item.address" /></p>
+                </div>
+              </div>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
       <div
         class="new-wallet"
         @click="$router.push('/create-wallet')"
