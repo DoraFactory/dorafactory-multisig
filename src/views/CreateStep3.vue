@@ -31,7 +31,7 @@ export default {
               'owner': this.$store.state.network.account.address
             }
             // overwrite existing wallets
-            wallets = wallets.filter((w)=>w.address!=wallet.address)
+            wallets = wallets.filter((w)=>w.address!=wallet.address || w.owner!=wallet.owner)
             wallets.push(wallet)
             this.$store.commit('network/setWallet', wallet)
             localStorage.setItem('multisig-wallets', JSON.stringify(wallets))

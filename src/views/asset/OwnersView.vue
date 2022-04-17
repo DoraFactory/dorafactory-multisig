@@ -1,18 +1,13 @@
 <script>
-import { RouterLink } from 'vue-router'
+import { mapGetters } from 'vuex'
 
 export default {
-    data: function() {
-      const storedWallets = localStorage.getItem('multisig-wallets')
-      if (!storedWallets) {
-        return {
-          wallets: []
+    computed: {
+    ...mapGetters(
+        {
+          wallet: 'network/selectedWallet'
         }
-      }
-      return {
-        wallets: JSON.parse(storedWallets)
-      }
-    }
+    )}
 }
 </script>
 <template>
@@ -22,7 +17,7 @@ export default {
     </p>
     <div class="owner-card-list">
       <div
-        v-for="(account,index) in wallets[0].accounts"
+        v-for="(account,index) in wallet.accounts"
         :key="index"
         class="owner-card"
       >
@@ -50,8 +45,10 @@ export default {
   margin-block-end: 40px
 .owner-card-list
   display: flex
-  justify-content: space-between 
+  justify-content: space-between
+  flex-wrap: wrap
 .owner-card
+  margin-top: 10px
   border: 2px solid #FFFFFF
   box-sizing: border-box
   border-radius: 34px
