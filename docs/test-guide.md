@@ -3,7 +3,7 @@
 This document is a black-box testing guide for dorafactory multisig frontend mvp milestone-1, which demonstrates a complete flow of using multisig. 
 
 ### Prerequisites
-1. Chrome web browser required
+1. Chrome web browser required, make sure it support locaStorage
 2. Install polkadot js extension for your browser https://polkadot.js.org/extension/
 3. Use the extension to create a least 3 new account and allow to use on any chain
 4. If you want to run whole test on you local machine, you can set up a local dev chain. We recommend [polkadot-v0.9.17 version](https://github.com/paritytech/polkadot/tree/release-v0.9.17)
